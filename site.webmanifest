@@ -1,0 +1,19 @@
+{
+  "name": "Panel de gestión BIOFILE — VIP Salud Ocupacional",
+  "short_name": "VIP BIOFILE",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-vip.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0b4678",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

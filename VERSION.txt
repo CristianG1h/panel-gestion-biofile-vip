@@ -1,0 +1,4 @@
+1.1.0
+- Consulta visual de exámenes asociados desde el Sheet Maestro
+- Recordatorio de rectificación con el correo original
+- Proyecto listo para GitHub y Netlify
