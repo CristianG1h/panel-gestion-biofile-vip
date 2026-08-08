@@ -23,3 +23,7 @@ Los exámenes se muestran solo como ayuda para recepción. No se agregan a `CAMP
 ## Publicación
 
 Es un sitio estático. En Netlify deje el comando de compilación vacío y use `.` como directorio de publicación.
+
+## Verificación de acceso
+
+Conexión de escritura de GitHub verificada correctamente el 8 de agosto de 2026.
