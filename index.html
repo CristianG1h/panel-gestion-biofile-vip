@@ -715,9 +715,19 @@
 
   .logo-vip-panel{display:block;width:76px;height:76px;object-fit:contain;margin:0 auto 6px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.10));}
   .conexion-wrap{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center;}
-  .estado-conexion{font-size:11px;font-weight:800;border-radius:99px;padding:5px 9px;white-space:nowrap;}
+  .estado-conexion{font-size:11px;font-weight:800;border-radius:12px;padding:6px 10px;line-height:1.35;max-width:390px;}
   .estado-conexion.conectado{background:#E7F5EC;color:#146B3A;}
   .estado-conexion.desconectado{background:#FBEAE8;color:#9C2C22;}
+  .modal-conexion{max-width:430px;}
+  .campo-login{display:block;margin-bottom:14px;}
+  .campo-login span{display:block;font-size:13px;font-weight:750;color:var(--gris-txt);margin-bottom:6px;}
+  .campo-login input{width:100%;padding:12px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:15px;}
+  .campo-login input:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(11,95,165,.13);}
+  .conexion-actual{margin:0 0 14px;padding:11px 12px;border-radius:9px;background:var(--verde-claro);color:#146B3A;font-size:13px;font-weight:700;line-height:1.4;}
+  .error-conexion{margin:0 0 14px;padding:10px 12px;border-radius:9px;background:#FBEAE8;color:#9C2C22;font-size:13px;line-height:1.4;}
+  .acciones-conexion{display:flex;gap:9px;flex-wrap:wrap;}
+  .acciones-conexion .btn{flex:1;}
+  .nota-conexion{font-size:11px;color:var(--gris-suave);line-height:1.45;margin:12px 0 0;}
   @media(max-width:520px){.logo-vip-panel{width:66px;height:66px}.header-linea{flex-direction:column}.conexion-wrap{width:100%}.conexion-wrap .btn{width:auto;}}
 
 
@@ -1048,6 +1058,23 @@
   </section>
 </div>
 
+<div class="modal-fondo oculto" id="modalConexion" role="dialog" aria-modal="true" aria-labelledby="tituloModalConexion">
+  <form class="modal-caja modal-conexion" id="formConexion">
+    <div class="modal-header"><span id="tituloModalConexion">🔐 Conectar con BIOFILE</span><button type="button" class="btn-cerrar-modal" id="btnCerrarModalConexion" aria-label="Cerrar">✕</button></div>
+    <div class="modal-cuerpo">
+      <div class="conexion-actual oculto" id="conexionActual"></div>
+      <label class="campo-login"><span>Usuario BIOFILE</span><input type="text" id="loginUsuario" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="150" required></label>
+      <label class="campo-login"><span>Contraseña</span><input type="password" id="loginContrasena" autocomplete="current-password" maxlength="500" required></label>
+      <div class="error-conexion oculto" id="errorConexion" role="alert"></div>
+      <div class="acciones-conexion">
+        <button type="submit" class="btn btn-azul" id="btnIniciarSesion">Conectar</button>
+        <button type="button" class="btn btn-gris oculto" id="btnCerrarSesion">Cerrar sesión actual</button>
+      </div>
+      <p class="nota-conexion">La contraseña se envía directamente al servidor para validarla; el panel no la guarda. La sesión temporal se elimina al cerrar la pestaña.</p>
+    </div>
+  </form>
+</div>
+
 <div class="modal-fondo oculto" id="modalReporte">
   <div class="modal-caja">
     <div class="modal-header"><span>📊 Reporte para empresa</span><button type="button" class="btn-cerrar-modal" id="btnCerrarModalReporte">✕</button></div>
@@ -1059,13 +1086,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ===================== CONFIGURACIÓN ===================== */
-const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbzRTN_j8Y2j03xJvxZoqAofDPBdRTvkHqcYUep-zuoxMSHj7N2qg8Cul6tyQ-xUNAlP/exec";
 const URL_APPS_SCRIPT_ORDEN = "https://script.google.com/macros/s/AKfycbyi519Shbz07KOhOb2SWNmvZZcqTJQxVe6snS3mtwuY7iW45Fo7ml2AYGZjLtMb8VKy/exec";
-const CLAVE_CONSULTA = "vip2026";
 const BIOFILE_API_URL = "https://biofile-render-endpoint.onrender.com";
-const CLAVE_SESION = "vip_biofile_api_key";
-const TRABAJOS_STORAGE = "vip_biofile_trabajos_v2";
-const MANUALES_STORAGE = "vip_biofile_ingresados_manuales_v2";
+const TOKEN_SESION = "vip_biofile_session_token_v3";
+const USUARIO_SESION = "vip_biofile_session_user_v3";
+const TRABAJOS_STORAGE = "vip_biofile_trabajos_v3";
+const MANUALES_STORAGE = "vip_biofile_ingresados_manuales_v3";
 
 const CAMPOS_BIOFILE = [
   ["Tipo doc","Tipo de documento","Datos personales"],
@@ -1100,8 +1126,8 @@ let registroActual = null;
 let indiceRegistroActual = -1;
 let pestañaActiva = 'pendiente';
 let seleccionados = new Set();
-let trabajos = cargarObjetoLocal(TRABAJOS_STORAGE, {});
-let documentosManuales = new Set(cargarObjetoLocal(MANUALES_STORAGE, []));
+let trabajos = {};
+let documentosManuales = new Set();
 let indiceSecuencial = 0;
 let cargandoRegistros = false;
 let ultimoPoll = 0;
@@ -1117,11 +1143,22 @@ const panelBusqueda = document.getElementById('panelBusqueda');
 function cargarObjetoLocal(clave, valorDefecto){
   try{ const v = localStorage.getItem(clave); return v ? JSON.parse(v) : valorDefecto; }catch(_e){ return valorDefecto; }
 }
-function guardarTrabajos(){ localStorage.setItem(TRABAJOS_STORAGE, JSON.stringify(trabajos)); }
-function guardarManuales(){ localStorage.setItem(MANUALES_STORAGE, JSON.stringify([...documentosManuales])); }
+function usuarioSesion(){
+  try{return JSON.parse(sessionStorage.getItem(USUARIO_SESION)||'null');}catch(_e){return null;}
+}
+function tokenSesion(){return sessionStorage.getItem(TOKEN_SESION)||'';}
+function claveUsuario(prefijo){const usuario=usuarioSesion();return usuario&&usuario.id?prefijo+':'+usuario.id:'';}
+function cargarEstadoUsuario(){
+  const claveTrabajos=claveUsuario(TRABAJOS_STORAGE),claveManuales=claveUsuario(MANUALES_STORAGE);
+  trabajos=claveTrabajos?cargarObjetoLocal(claveTrabajos,{}):{};
+  documentosManuales=new Set(claveManuales?cargarObjetoLocal(claveManuales,[]):[]);
+}
+function guardarTrabajos(){const clave=claveUsuario(TRABAJOS_STORAGE);if(clave)localStorage.setItem(clave,JSON.stringify(trabajos));}
+function guardarManuales(){const clave=claveUsuario(MANUALES_STORAGE);if(clave)localStorage.setItem(clave,JSON.stringify([...documentosManuales]));}
 function limpiarTexto(v){ return v === null || v === undefined ? '' : String(v).trim(); }
 function escaparHtml(v){ return limpiarTexto(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 function docDe(r){ return limpiarTexto(r && r["N° documento"]); }
+function filaDe(r){const fila=Number(r&&r.__fila);return Number.isInteger(fila)&&fila>=2?fila:0;}
 function estadoHoja(r){ return limpiarTexto(r && r["ESTADO_BIOFILE"]).toUpperCase(); }
 function numeroOrden(r){ return limpiarTexto(r && (r["NUMERO_OS_BIOFILE"] || r["NUMERO_ORDEN"])); }
 function errorHoja(r){ return limpiarTexto(r && r["ERROR_BIOFILE"]); }
@@ -1351,46 +1388,117 @@ async function consultarExamenesAsociados(forzar=false){
 }
 document.getElementById('btnConsultarExamenes').addEventListener('click',()=>consultarExamenesAsociados(true));
 
-function pedirClaveApi(forzar=false){
-  let clave=forzar ? '' : (sessionStorage.getItem(CLAVE_SESION) || '');
-  if(clave) return clave;
-  clave=prompt('Ingrese la clave API configurada en Render. Se guardará únicamente mientras esta sesión del navegador permanezca abierta:') || '';
-  clave=clave.trim();
-  if(clave) sessionStorage.setItem(CLAVE_SESION, clave);
-  return clave;
-}
-async function llamarApi(ruta, opciones={}){
-  const clave=pedirClaveApi(false); if(!clave) throw new Error('No se configuró la clave de acceso al robot.');
-  const respuesta=await fetch(BIOFILE_API_URL+ruta,{...opciones,headers:{'Content-Type':'application/json','X-API-Key':clave,...(opciones.headers||{})}});
-  const texto=await respuesta.text(); let data={}; try{data=texto?JSON.parse(texto):{};}catch(_e){throw new Error('Render respondió con un formato no válido.');}
-  if(respuesta.status===401){sessionStorage.removeItem(CLAVE_SESION);actualizarEstadoConexion();throw new Error('La clave de conexión no es correcta. Presione “Conectar con BIOFILE” e ingrésela nuevamente.');}
-  if(!respuesta.ok && respuesta.status!==409) throw new Error(data.error || `Error HTTP ${respuesta.status}`);
-  return {data,status:respuesta.status};
-}
+const modalConexion=document.getElementById('modalConexion');
+const formConexion=document.getElementById('formConexion');
+const loginUsuario=document.getElementById('loginUsuario');
+const loginContrasena=document.getElementById('loginContrasena');
 
 function actualizarEstadoConexion(){
-  const conectado=Boolean(sessionStorage.getItem(CLAVE_SESION));
+  const usuario=usuarioSesion();
+  const conectado=Boolean(tokenSesion()&&usuario&&usuario.nombre);
   const estado=document.getElementById('estadoConexion');
   const boton=document.getElementById('btnConfigurarAcceso');
-  estado.textContent=conectado?'Conectado en esta sesión':'No conectado';
+  estado.textContent=conectado?`Hola ${usuario.nombre}, estás conectado con BIOFILE.`:'No conectado';
   estado.classList.toggle('conectado',conectado);estado.classList.toggle('desconectado',!conectado);
-  boton.textContent=conectado?'🔄 Cambiar conexión':'🔌 Conectar con BIOFILE';
+  boton.textContent=conectado?'🔄 Cambiar usuario':'🔌 Conectar con BIOFILE';
 }
-document.getElementById('btnConfigurarAcceso').addEventListener('click',()=>{
-  const clave=pedirClaveApi(true);
-  if(clave){toast('Conexión guardada únicamente durante esta sesión del navegador.','exito');}
-  else{sessionStorage.removeItem(CLAVE_SESION);toast('No se guardó ninguna clave.','error');}
+function abrirModalConexion(){
+  const usuario=usuarioSesion();
+  const actual=document.getElementById('conexionActual');
+  const btnCerrarSesion=document.getElementById('btnCerrarSesion');
+  document.getElementById('errorConexion').classList.add('oculto');
+  if(usuario&&tokenSesion()){
+    actual.textContent=`Sesión actual: ${usuario.nombre}`;
+    actual.classList.remove('oculto');
+    btnCerrarSesion.classList.remove('oculto');
+    loginUsuario.value=usuario.usuario||usuario.nombre||'';
+  }else{
+    actual.classList.add('oculto');
+    btnCerrarSesion.classList.add('oculto');
+  }
+  loginContrasena.value='';
+  modalConexion.classList.remove('oculto');
+  setTimeout(()=>loginUsuario.focus(),0);
+}
+function cerrarModalConexion(){modalConexion.classList.add('oculto');}
+function limpiarSesionLocal(){
+  sessionStorage.removeItem(TOKEN_SESION);
+  sessionStorage.removeItem(USUARIO_SESION);
+  registrosCargados=[];seleccionados.clear();trabajos={};documentosManuales=new Set();
+  registroActual=null;indiceRegistroActual=-1;ficha.classList.remove('activa');panelBusqueda.style.display='block';
   actualizarEstadoConexion();
+  listaRegistros.innerHTML='<div class="estado-vacio">Conéctese con su usuario BIOFILE para consultar los registros.</div>';
+  actualizarContadores();actualizarBarraMasiva();
+}
+async function llamarApi(ruta,opciones={}){
+  const token=tokenSesion();
+  if(!token){abrirModalConexion();throw new Error('Inicie sesión con su usuario BIOFILE para continuar.');}
+  const respuesta=await fetch(BIOFILE_API_URL+ruta,{...opciones,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,...(opciones.headers||{})}});
+  const texto=await respuesta.text();let data={};try{data=texto?JSON.parse(texto):{};}catch(_e){throw new Error('Render respondió con un formato no válido.');}
+  if(respuesta.status===401){
+    limpiarSesionLocal();abrirModalConexion();
+    throw new Error('La sesión venció o ya no es válida. Inicie sesión nuevamente.');
+  }
+  if(!respuesta.ok&&respuesta.status!==409)throw new Error(data.error||`Error HTTP ${respuesta.status}`);
+  return {data,status:respuesta.status};
+}
+async function restaurarSesion(){
+  actualizarEstadoConexion();
+  if(!tokenSesion()||!usuarioSesion()){
+    limpiarSesionLocal();abrirModalConexion();return;
+  }
+  listaRegistros.innerHTML='<div class="estado-carga">Verificando sesión…</div>';
+  try{
+    const {data}=await llamarApi('/api/auth/me',{method:'GET'});
+    sessionStorage.setItem(USUARIO_SESION,JSON.stringify(data.usuario));
+    cargarEstadoUsuario();actualizarEstadoConexion();
+    await cargarRegistros(false);
+  }catch(error){
+    if(!tokenSesion())return;
+    listaRegistros.innerHTML='<div class="estado-vacio">No se pudo verificar la sesión: '+escaparHtml(error.message)+'</div>';
+  }
+}
+document.getElementById('btnConfigurarAcceso').addEventListener('click',abrirModalConexion);
+document.getElementById('btnCerrarModalConexion').addEventListener('click',cerrarModalConexion);
+document.getElementById('btnCerrarSesion').addEventListener('click',()=>{
+  limpiarSesionLocal();cerrarModalConexion();toast('Sesión cerrada en este navegador.','exito');
 });
-actualizarEstadoConexion();
+modalConexion.addEventListener('click',e=>{if(e.target===modalConexion)cerrarModalConexion();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modalConexion.classList.contains('oculto'))cerrarModalConexion();});
+formConexion.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const boton=document.getElementById('btnIniciarSesion');
+  const errorEl=document.getElementById('errorConexion');
+  errorEl.classList.add('oculto');boton.disabled=true;boton.textContent='Conectando…';
+  try{
+    const respuesta=await fetch(BIOFILE_API_URL+'/api/auth/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({usuario:loginUsuario.value.trim(),contrasena:loginContrasena.value})
+    });
+    const texto=await respuesta.text();let data={};try{data=texto?JSON.parse(texto):{};}catch(_e){throw new Error('Render respondió con un formato no válido.');}
+    if(!respuesta.ok)throw new Error(data.error||`Error HTTP ${respuesta.status}`);
+    sessionStorage.setItem(TOKEN_SESION,data.token);
+    sessionStorage.setItem(USUARIO_SESION,JSON.stringify(data.usuario));
+    registrosCargados=[];seleccionados.clear();registroActual=null;indiceRegistroActual=-1;
+    ficha.classList.remove('activa');panelBusqueda.style.display='block';
+    loginContrasena.value='';cargarEstadoUsuario();actualizarEstadoConexion();cerrarModalConexion();
+    toast(data.mensaje||'Conexión establecida con BIOFILE.','exito');
+    await cargarRegistros(false);
+  }catch(error){
+    loginContrasena.value='';errorEl.textContent=error.message;errorEl.classList.remove('oculto');loginContrasena.focus();
+  }finally{boton.disabled=false;boton.textContent='Conectar';}
+});
 
 async function cargarRegistros(silencioso=false){
+  if(!tokenSesion()){
+    if(!silencioso)listaRegistros.innerHTML='<div class="estado-vacio">Conéctese con su usuario BIOFILE para consultar los registros.</div>';
+    return;
+  }
   if(cargandoRegistros) return; cargandoRegistros=true;
   if(!silencioso) listaRegistros.innerHTML='<div class="estado-carga">Cargando registros…</div>';
   try{
-    const url=URL_APPS_SCRIPT+'?accion=listar&clave='+encodeURIComponent(CLAVE_CONSULTA)+'&busqueda='+encodeURIComponent(inputBusqueda.value.trim());
-    const resp=await fetch(url,{cache:'no-store'}); const data=await resp.json();
-    if(!data.ok) throw new Error(data.error || 'Apps Script no pudo listar los registros.');
+    const {data}=await llamarApi('/api/registros?busqueda='+encodeURIComponent(inputBusqueda.value.trim()),{method:'GET'});
+    if(!data.ok) throw new Error(data.error || 'No fue posible listar los registros.');
     registrosCargados=Array.isArray(data.registros)?data.registros:[];
     sincronizarTrabajosConHoja(); pintarLista(); actualizarFichaAbierta();
   }catch(error){ if(!silencioso) listaRegistros.innerHTML='<div class="estado-vacio">No se pudieron cargar los registros: '+escaparHtml(error.message)+'</div>'; }
@@ -1476,7 +1584,7 @@ document.getElementById('checkSeleccionarVisibles').addEventListener('change',fu
 
 document.getElementById('btnEnviarSeleccionados').addEventListener('click',async()=>{
   const docs=[...seleccionados]; if(!docs.length)return;
-  if(!pedirClaveApi(false))return;
+  if(!tokenSesion()){abrirModalConexion();return;}
   const conImagenes=document.getElementById('checkImagenesMasivo').checked;
   if(!confirm(`Se enviarán ${docs.length} registro(s) a BIOFILE${conImagenes?' con foto y firma':' sin imágenes'}. ¿Continuar?`))return;
   let aceptados=0, fallidos=0;
@@ -1493,8 +1601,11 @@ document.getElementById('btnEnviarSeleccionados').addEventListener('click',async
 async function enviarRegistro(r,subirImagenes=true,silencioso=false){
   const doc=docDe(r); if(!doc) throw new Error('El registro no tiene documento.');
   try{
-    const {data,status}=await llamarApi('/api/biofile/enviar',{method:'POST',body:JSON.stringify({documento:doc,subirImagenes:Boolean(subirImagenes)})});
-    const job=data.job; if(!job || !job.id) throw new Error('Render no devolvió un jobId.');
+    const fila=filaDe(r);
+    const {data,status}=await llamarApi('/api/biofile/enviar',{method:'POST',body:JSON.stringify({documento:doc,fila:fila||undefined,subirImagenes:Boolean(subirImagenes)})});
+    const job=data.job;
+    if(status===409&&!job)throw new Error(data.mensaje||'Ese paciente ya está siendo procesado por otro usuario.');
+    if(!job||!job.id)throw new Error('Render no devolvió un jobId.');
     trabajos[doc]={...job,jobId:job.id,estado:job.estado||'en_cola',subirImagenes:Boolean(subirImagenes),actualizadoEn:new Date().toISOString()}; guardarTrabajos();
     if(!silencioso) toast(status===409?'Ese paciente ya estaba en cola. Se continuará mostrando su proceso.':'Solicitud enviada a Render.','exito');
     pintarLista(); actualizarFichaAbierta(); iniciarPollRapido(); return trabajos[doc];
@@ -1720,7 +1831,7 @@ function generarExcelEmpresa(nombre,filas){
   const ws=XLSX.utils.json_to_sheet(datos);ws['!cols']=[{wch:30},{wch:16},{wch:18},{wch:15},{wch:20},{wch:18},{wch:15},{wch:42},{wch:12},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Empleados');XLSX.writeFile(wb,'Reporte_'+nombre.replace(/[^a-zA-Z0-9]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');modalReporte.classList.add('oculto');
 }
 
-cargarRegistros(false);
+restaurarSesion();
 </script>
 </body>
 </html>

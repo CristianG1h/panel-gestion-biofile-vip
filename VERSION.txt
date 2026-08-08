@@ -1,4 +1,5 @@
-1.1.0
-- Consulta visual de exámenes asociados desde el Sheet Maestro
-- Recordatorio de rectificación con el correo original
-- Proyecto listo para GitHub y Netlify
+1.2.0
+- Inicio de sesión multiusuario con saludo personalizado
+- Consulta de pacientes protegida por el endpoint de Render
+- Envío acelerado mediante la fila exacta de Google Sheets
+- Sesiones y estados locales separados por usuario

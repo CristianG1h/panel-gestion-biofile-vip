@@ -5,6 +5,8 @@ Panel estático para buscar pacientes registrados, enviarlos al robot de BIOFILE
 ## Funciones
 
 - Consulta registros desde Google Sheets.
+- Inicio de sesión individual con la cuenta BIOFILE de cada colaborador.
+- Saludo y sesión temporal separados por usuario; la contraseña no se guarda en el navegador.
 - Envío automático al endpoint de BIOFILE en Render.
 - Ingreso manual con foto, firma y copia de datos.
 - Consulta visual de exámenes asociados desde el Sheet Maestro.
@@ -16,9 +18,11 @@ Los exámenes se muestran solo como ayuda para recepción. No se agregan a `CAMP
 
 ## Servicios configurados
 
-- Receptor de registros: Google Apps Script v3.
+- Consulta protegida de registros: endpoint de BIOFILE en Render (`GET /api/registros`).
 - Consulta de órdenes/exámenes: Google Apps Script v4 (`accion=buscarPersona`).
 - Robot: `https://biofile-render-endpoint.onrender.com`.
+
+El endpoint debe tener configurados `BIOFILE_USERS_JSON`, `SESSION_SECRET`, `GOOGLE_SERVICE_ACCOUNT_JSON` o su Secret File, y el origen público de este panel en `ALLOWED_ORIGINS`.
 
 ## Publicación
 
