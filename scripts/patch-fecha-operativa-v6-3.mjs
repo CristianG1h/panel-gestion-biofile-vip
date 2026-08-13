@@ -50,5 +50,26 @@ if (!html.includes('/* ACTUALIZAR_PACIENTES_V64 */')) {
   html = html.replace(visibles, actualizar + visibles);
 }
 
+if (!html.includes('/* VERIFICAR_BIOFILE_PANEL_V64 */')) {
+  html = html.replace('</style>', `
+/* VERIFICAR_BIOFILE_PANEL_V64 */
+.btnVerificarBiofile{background:#0B5FA5;color:#fff}
+</style>`);
+
+  const acciones = "${tab==='pendiente'?'<button class=\"btn azul sm enviar\">Enviar</button>':''}${tab==='proceso'&&v.c==='err'?'<button class=\"btn gris sm manual\">Ingreso manual</button>':''}${['pendiente','proceso'].includes(tab)?'<button class=\"btn rojo sm eliminar\">Eliminar</button>':''}";
+  if (!html.includes(acciones)) throw new Error('No se encontró el bloque de acciones para Verificar.');
+  const nuevas = "${tab==='pendiente'?'<button class=\"btn azul sm enviar\">Enviar</button>':''}${tab==='proceso'&&v.c==='err'?'<button class=\"btn btnVerificarBiofile sm verificar\">🔎 Verificar</button><button class=\"btn gris sm manual\">Ingreso manual</button>':''}${['pendiente','proceso'].includes(tab)?'<button class=\"btn rojo sm eliminar\">Eliminar</button>':''}";
+  html = html.replace(acciones, nuevas);
+
+  const abrir = "function abrirFicha(r,modo='auto'){";
+  if (!html.includes(abrir)) throw new Error('No se encontró abrirFicha().');
+  const helper = `async function verificarBiofile(r,boton){if(!r)return;const b=boton,txt=b?.textContent||'🔎 Verificar';if(b){b.disabled=true;b.textContent='⏳ Verificando…'}try{const{data}=await api('/api/registros/verificar-biofile',{method:'POST',body:JSON.stringify({documento:doc(r),fila:filaDe(r)})});if(data.conciliado){toast(data.mensaje||'Registro conciliado.','ok');delete trabajos[claveRegistro(r)];delete trabajos[doc(r)];guardarJobs();await cargarRegistros(true);activarTab('ingresado');return}if(data.requiereConfirmacionManual){toast(data.mensaje||'Confirma el ingreso manual.');abrirFicha(r,'manual');return}toast(data.mensaje||'No se pudo conciliar el registro.','err')}catch(e){toast(e.message,'err')}finally{if(b&&document.body.contains(b)){b.disabled=false;b.textContent=txt}}}\n`;
+  html = html.replace(abrir, helper + abrir);
+
+  const manual = "div.querySelector('.manual')?.addEventListener('click',e=>{e.stopPropagation();abrirFicha(r,'manual')});";
+  if (!html.includes(manual)) throw new Error('No se encontró el handler manual.');
+  html = html.replace(manual, "div.querySelector('.verificar')?.addEventListener('click',e=>{e.stopPropagation();verificarBiofile(r,e.currentTarget)});" + manual);
+}
+
 fs.writeFileSync(appPath, html, 'utf8');
-console.log('[Netlify] Fecha operativa v6.3 y actualización manual v6.4 habilitadas.');
+console.log('[Netlify] Fecha operativa, actualización y conciliación v6.4 habilitadas.');
