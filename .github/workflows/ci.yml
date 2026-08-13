@@ -20,8 +20,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Ejecutar build real del panel
-        run: node scripts/patch-superadmin-panel.mjs && node scripts/patch-progress-detail.mjs && node scripts/patch-operacion-panel-v5.mjs && node scripts/fix-paginacion-lista.mjs && node scripts/patch-ingresado-por.mjs && node scripts/patch-seguridad-panel-v6.mjs && node scripts/patch-seguridad-panel-v6-1.mjs
+      - name: Patch Super Admin
+        run: node scripts/patch-superadmin-panel.mjs
+      - name: Patch progreso
+        run: node scripts/patch-progress-detail.mjs
+      - name: Patch operación v5
+        run: node scripts/patch-operacion-panel-v5.mjs
+      - name: Verificar paginación
+        run: node scripts/fix-paginacion-lista.mjs
+      - name: Patch responsable de ingreso
+        run: node scripts/patch-ingresado-por.mjs
+      - name: Patch seguridad v6
+        run: node scripts/patch-seguridad-panel-v6.mjs
+      - name: Patch seguridad v6.1
+        run: node scripts/patch-seguridad-panel-v6-1.mjs
       - name: Verificar protecciones instaladas
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
