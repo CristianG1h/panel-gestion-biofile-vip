@@ -34,10 +34,14 @@ jobs:
         run: node scripts/patch-seguridad-panel-v6.mjs
       - name: Patch seguridad v6.1
         run: node scripts/patch-seguridad-panel-v6-1.mjs
+      - name: Patch fecha operativa v6.3
+        run: node scripts/patch-fecha-operativa-v6-3.mjs
       - name: Verificar protecciones instaladas
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
           grep -q 'PANEL_SEGURIDAD_V61' app-v3.html
+          grep -q 'FECHA_OPERATIVA_PANEL_V63' app-v3.html
+          grep -q 'FECHA_BIOFILE_ISO' app-v3.html
           grep -q '/api/registros/listar' app-v3.html
           grep -q 'fila:filaDe' app-v3.html
           grep -q 'REVISAR_BIOFILE' app-v3.html
