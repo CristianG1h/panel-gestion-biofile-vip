@@ -1,0 +1,32 @@
+name: Validar panel BIOFILE
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-netlify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Ejecutar build real del panel
+        run: node scripts/patch-superadmin-panel.mjs && node scripts/patch-progress-detail.mjs && node scripts/patch-operacion-panel-v5.mjs && node scripts/fix-paginacion-lista.mjs && node scripts/patch-ingresado-por.mjs && node scripts/patch-seguridad-panel-v6.mjs && node scripts/patch-seguridad-panel-v6-1.mjs
+      - name: Verificar protecciones instaladas
+        run: |
+          grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
+          grep -q 'PANEL_SEGURIDAD_V61' app-v3.html
+          grep -q '/api/registros/listar' app-v3.html
+          grep -q 'fila:filaDe' app-v3.html
+          grep -q 'REVISAR_BIOFILE' app-v3.html
+          ! grep -q 'const CLAVE_CONSULTA="vip2026"' app-v3.html
