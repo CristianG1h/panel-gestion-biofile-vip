@@ -38,6 +38,8 @@ jobs:
         run: node scripts/patch-fecha-operativa-v6-3.mjs
       - name: Patch reporte empresas v6.5
         run: node scripts/patch-reporte-empresas-v6-5.mjs
+      - name: Patch relaciones Excel v6.6
+        run: node scripts/patch-reporte-relaciones-v6-6.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -47,7 +49,8 @@ jobs:
           grep -q '/api/registros/listar' app-v3.html
           grep -q 'fila:filaDe' app-v3.html
           grep -q 'REVISAR_BIOFILE' app-v3.html
-          grep -q 'REPORTE_EMPRESAS_CANONICAS_V65' app-v3.html
+          grep -q 'REPORTE_EMPRESAS_RELACIONES_EXCEL_V66' app-v3.html
           grep -q 'ELIMINADO_POR_VISIBLE_V65' app-v3.html
-          grep -q 'ALIMENTOS GAMAR SAS' app-v3.html
+          grep -q 'TEMPORALES AVANZADOS SAS' app-v3.html
+          grep -q 'CENCARDIO' app-v3.html
           ! grep -q 'const CLAVE_CONSULTA="vip2026"' app-v3.html
