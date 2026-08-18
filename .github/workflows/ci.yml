@@ -50,6 +50,8 @@ jobs:
         run: node scripts/patch-panel-auditoria-relacion-v6-10.mjs
       - name: Patch contraste relación v6.11
         run: node scripts/patch-contraste-relacion-v6-11.mjs
+      - name: Patch guía ingreso manual v6.12
+        run: node scripts/patch-manual-relacion-biofile-v6-12.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -65,6 +67,12 @@ jobs:
           grep -q 'PANEL_ACUERDO_MISION_V69' app-v3.html
           grep -q 'PANEL_AUDITORIA_RELACION_V610' app-v3.html
           grep -q 'PANEL_CONTRASTE_RELACION_V611' app-v3.html
+          grep -q 'PANEL_MANUAL_RELACION_V612' app-v3.html
+          grep -q 'manualAcuerdoBiofile' app-v3.html
+          grep -q 'manualMisionBiofile' app-v3.html
+          grep -q 'Datos de empresa para ingresar en BIOFILE' app-v3.html
+          grep -q 'Nombre del Acuerdo Comercial, Contrato o Convenio' app-v3.html
+          grep -q 'No se identificó una relación segura' app-v3.html
           grep -q 'empresa-acuerdo' app-v3.html
           grep -q 'empresa-mision' app-v3.html
           grep -q 'ACUERDO_COMERCIAL_BIOFILE' app-v3.html
