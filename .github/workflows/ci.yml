@@ -46,6 +46,8 @@ jobs:
         run: node scripts/patch-reporte-cache-v6-8.mjs
       - name: Patch vista Acuerdo y Misión v6.9
         run: node scripts/patch-panel-acuerdo-mision-v6-9.mjs
+      - name: Patch auditoría relación BIOFILE v6.10
+        run: node scripts/patch-panel-auditoria-relacion-v6-10.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -59,6 +61,11 @@ jobs:
           grep -q 'REPORTE_ACUERDO_MISION_V67' app-v3.html
           grep -q 'REPORTE_CACHE_INCREMENTAL_V68' app-v3.html
           grep -q 'PANEL_ACUERDO_MISION_V69' app-v3.html
+          grep -q 'PANEL_AUDITORIA_RELACION_V610' app-v3.html
+          grep -q 'ACUERDO_COMERCIAL_BIOFILE' app-v3.html
+          grep -q 'EMPRESA_MISION_BIOFILE' app-v3.html
+          grep -q 'ORIGEN_RELACION_EMPRESA' app-v3.html
+          grep -q 'Fallback PARTICULARES' app-v3.html
           grep -q 'badgesEmpresaPanelV69' app-v3.html
           grep -q 'Relación empresarial' app-v3.html
           grep -q 'VIP_REPORTE_EMPRESA_' app-v3.html
