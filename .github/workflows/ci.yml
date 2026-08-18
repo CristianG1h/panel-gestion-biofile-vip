@@ -52,6 +52,8 @@ jobs:
         run: node scripts/patch-contraste-relacion-v6-11.mjs
       - name: Patch guía ingreso manual v6.12
         run: node scripts/patch-manual-relacion-biofile-v6-12.mjs
+      - name: Patch orden exacto BIOFILE v6.13
+        run: node scripts/patch-manual-orden-biofile-v6-13.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -68,11 +70,15 @@ jobs:
           grep -q 'PANEL_AUDITORIA_RELACION_V610' app-v3.html
           grep -q 'PANEL_CONTRASTE_RELACION_V611' app-v3.html
           grep -q 'PANEL_MANUAL_RELACION_V612' app-v3.html
-          grep -q 'manualAcuerdoBiofile' app-v3.html
-          grep -q 'manualMisionBiofile' app-v3.html
-          grep -q 'Datos de empresa para ingresar en BIOFILE' app-v3.html
+          grep -q 'PANEL_MANUAL_ORDEN_BIOFILE_V613' app-v3.html
+          grep -q 'SECUENCIA_BIOFILE_MANUAL_V613' app-v3.html
+          grep -q 'Secuencia para ingreso manual en BIOFILE' app-v3.html
+          grep -q 'Tipo de Evaluación Médica o Procedimiento' app-v3.html
           grep -q 'Nombre del Acuerdo Comercial, Contrato o Convenio' app-v3.html
-          grep -q 'No se identificó una relación segura' app-v3.html
+          grep -q 'Nombre de la Empresa en Misión' app-v3.html
+          grep -q 'Nombre del Paquete' app-v3.html
+          grep -q 'Diagnóstico CIE-10' app-v3.html
+          grep -q 'Tipo de vinculación' app-v3.html
           grep -q 'empresa-acuerdo' app-v3.html
           grep -q 'empresa-mision' app-v3.html
           grep -q 'ACUERDO_COMERCIAL_BIOFILE' app-v3.html
@@ -80,7 +86,6 @@ jobs:
           grep -q 'ORIGEN_RELACION_EMPRESA' app-v3.html
           grep -q 'Fallback PARTICULARES' app-v3.html
           grep -q 'badgesEmpresaPanelV69' app-v3.html
-          grep -q 'Relación empresarial' app-v3.html
           grep -q 'VIP_REPORTE_EMPRESA_' app-v3.html
           grep -q 'ELIMINADO_POR_VISIBLE_V65' app-v3.html
           grep -q 'TEXTILES 1X1' app-v3.html
