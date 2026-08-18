@@ -1,5 +1,5 @@
 [build]
-  command = "node scripts/patch-superadmin-panel.mjs && node scripts/patch-progress-detail.mjs && node scripts/patch-operacion-panel-v5.mjs && node scripts/fix-paginacion-lista.mjs && node scripts/patch-ingresado-por.mjs && node scripts/patch-seguridad-panel-v6.mjs && node scripts/patch-seguridad-panel-v6-1.mjs && node scripts/patch-fecha-operativa-v6-3.mjs && node scripts/patch-reporte-empresas-v6-5.mjs && node scripts/patch-reporte-relaciones-v6-6.mjs"
+  command = "node scripts/patch-superadmin-panel.mjs && node scripts/patch-progress-detail.mjs && node scripts/patch-operacion-panel-v5.mjs && node scripts/fix-paginacion-lista.mjs && node scripts/patch-ingresado-por.mjs && node scripts/patch-seguridad-panel-v6.mjs && node scripts/patch-seguridad-panel-v6-1.mjs && node scripts/patch-fecha-operativa-v6-3.mjs && node scripts/patch-reporte-empresas-v6-5.mjs && node scripts/patch-reporte-relaciones-v6-6.mjs && node scripts/patch-reporte-acuerdo-mision-v6-7.mjs"
   publish = "."
 
 [[redirects]]
