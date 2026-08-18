@@ -42,6 +42,8 @@ jobs:
         run: node scripts/patch-reporte-relaciones-v6-6.mjs
       - name: Patch Acuerdo y Empresa en Misión v6.7
         run: node scripts/patch-reporte-acuerdo-mision-v6-7.mjs
+      - name: Patch cache incremental v6.8
+        run: node scripts/patch-reporte-cache-v6-8.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -53,6 +55,8 @@ jobs:
           grep -q 'REVISAR_BIOFILE' app-v3.html
           grep -q 'REPORTE_EMPRESAS_RELACIONES_EXCEL_V66' app-v3.html
           grep -q 'REPORTE_ACUERDO_MISION_V67' app-v3.html
+          grep -q 'REPORTE_CACHE_INCREMENTAL_V68' app-v3.html
+          grep -q 'VIP_REPORTE_EMPRESA_' app-v3.html
           grep -q 'ELIMINADO_POR_VISIBLE_V65' app-v3.html
           grep -q 'TEXTILES 1X1' app-v3.html
           grep -q 'MEDYSCOL' app-v3.html
