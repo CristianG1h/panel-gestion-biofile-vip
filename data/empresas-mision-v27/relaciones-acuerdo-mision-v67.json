@@ -1,1 +1,29 @@
-PLACEHOLDER
+{
+  "version": "V6.7",
+  "source": "RESULTADO_EMPRESAS_MISION_V27.xlsx",
+  "description": "Relaciones jerarquicas Acuerdo Comercial -> Empresa en Mision usadas por el reporte del panel.",
+  "parts": 6,
+  "relations": 1093,
+  "shortNames": {
+    "MEDICINA, SALUD Y SEGURIDAD EN EL TRABAJO DE COLOMBIA SAS": "MEDYSCOL",
+    "COMFICA COLOMBIA S.A.S.": "COMFICA"
+  },
+  "specialAliases": {
+    "XXXX": {
+      "principal": "COMFICA COLOMBIA S.A.S.",
+      "mision": "NO REFIERE"
+    },
+    "COMFICA": {
+      "principal": "COMFICA COLOMBIA S.A.S.",
+      "mision": "COMFICA COLOMBIA S.A.S."
+    },
+    "XXX": {
+      "principal": "STEEL ROOF S.A.S",
+      "mision": "STEEL ROOF S.A.S"
+    },
+    "MEDYSCOL": {
+      "principal": "MEDICINA, SALUD Y SEGURIDAD EN EL TRABAJO DE COLOMBIA SAS",
+      "mision": "MEDICINA, SALUD Y SEGURIDAD EN EL TRABAJO DE COLOMBIA SAS"
+    }
+  }
+}
