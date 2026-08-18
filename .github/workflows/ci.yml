@@ -36,7 +36,9 @@ jobs:
         run: node scripts/patch-seguridad-panel-v6-1.mjs
       - name: Patch fecha operativa v6.3
         run: node scripts/patch-fecha-operativa-v6-3.mjs
-      - name: Verificar protecciones instaladas
+      - name: Patch reporte empresas v6.5
+        run: node scripts/patch-reporte-empresas-v6-5.mjs
+      - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
           grep -q 'PANEL_SEGURIDAD_V61' app-v3.html
@@ -45,4 +47,7 @@ jobs:
           grep -q '/api/registros/listar' app-v3.html
           grep -q 'fila:filaDe' app-v3.html
           grep -q 'REVISAR_BIOFILE' app-v3.html
+          grep -q 'REPORTE_EMPRESAS_CANONICAS_V65' app-v3.html
+          grep -q 'ELIMINADO_POR_VISIBLE_V65' app-v3.html
+          grep -q 'ALIMENTOS GAMAR SAS' app-v3.html
           ! grep -q 'const CLAVE_CONSULTA="vip2026"' app-v3.html
