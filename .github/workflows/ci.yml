@@ -54,6 +54,8 @@ jobs:
         run: node scripts/patch-manual-relacion-biofile-v6-12.mjs
       - name: Patch orden exacto BIOFILE v6.13
         run: node scripts/patch-manual-orden-biofile-v6-13.mjs
+      - name: Patch catálogo de paquetes v7
+        run: node scripts/patch-panel-catalogo-paquetes-v7.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -71,6 +73,11 @@ jobs:
           grep -q 'PANEL_CONTRASTE_RELACION_V611' app-v3.html
           grep -q 'PANEL_MANUAL_RELACION_V612' app-v3.html
           grep -q 'PANEL_MANUAL_ORDEN_BIOFILE_V613' app-v3.html
+          grep -q 'PANEL_CATALOGO_PAQUETES_V7' app-v3.html
+          grep -q 'autoEmpresaV7' app-v3.html
+          grep -q 'autoTipoV7' app-v3.html
+          grep -q 'autoPaqueteV7' app-v3.html
+          grep -q '/api/catalogo/empresa' app-v3.html
           grep -q 'SECUENCIA_BIOFILE_MANUAL_V613' app-v3.html
           grep -q 'Secuencia para ingreso manual en BIOFILE' app-v3.html
           grep -q 'Tipo de Evaluación Médica o Procedimiento' app-v3.html
