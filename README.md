@@ -4,7 +4,7 @@ Panel web de **VIP Salud Ocupacional** para buscar pacientes, revisar informaci�
 
 El proyecto es estático, se publica en **Netlify** y consume el backend `biofile-render-endpoint` alojado en Render.
 
-> **Documentación actualizada: 12 de agosto de 2026.**
+> **Documentación actualizada: 31 de agosto de 2026.**
 
 ## Panel actual
 
@@ -58,6 +58,18 @@ Mientras un paciente está siendo procesado, el panel puede mostrar:
 - mensaje final o error si el proceso falla.
 
 Esto facilita saber si el robot está iniciando sesión, llenando información, cargando imágenes, guardando o finalizando.
+
+### Configuración dinámica de la orden BIOFILE
+
+Antes de enviar un paciente automáticamente, el panel muestra tres controles:
+
+- **Empresa / Acuerdo comercial:** se obtiene del registro y queda bloqueado en el envío automático.
+- **Tipo de evaluación:** permite elegir Ingreso, Periódico, Egreso o Post Incapacidad; Ingreso continúa como valor inicial.
+- **Paquete:** muestra únicamente los paquetes activos que BIOFILE tiene asociados a esa empresa y al tipo seleccionado.
+
+Si no existe un paquete aplicable, el panel conserva **NO APLICA**. Cuando se selecciona un paquete, el backend valida que continúe activo antes de crear la orden y envía su nombre exacto a BIOFILE para que el propio sistema cargue los exámenes configurados.
+
+El catálogo se consulta desde el backend y puede actualizarse manualmente desde el panel. Una empresa ya investigada utiliza los datos persistidos mientras no hayan vencido las 24 horas de vigencia.
 
 ### Ingreso manual
 
