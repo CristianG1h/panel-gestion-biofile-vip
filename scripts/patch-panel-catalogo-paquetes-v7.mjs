@@ -172,7 +172,7 @@ const enviarNuevo = [
   "async function enviarRegistro(r,imgs=true,sil=false,configOrden=null){",
   "  const d=doc(r),rk=claveRegistro(r),cfg=configOrden||{empresa:empresaSeguraV7(r),tipoEvaluacion:TIPOS_EVALUACION_V7[0],paquete:'NO APLICA'};",
   "  const body={documento:d,fila:filaDe(r),subirImagenes:!!imgs,empresa:cfg.empresa||empresaSeguraV7(r),tipoEvaluacion:cfg.tipoEvaluacion||TIPOS_EVALUACION_V7[0],paquete:cfg.paquete||'NO APLICA'};",
-  "  const{data,status}=await api('/api/biofile/enviar',{method:'POST',body:JSON.stringify(body)});",
+  "  const{data,status}=await api('/api/biofile/enviar',{method:'POST',body:JSON.stringify(body)});if(status===409&&!data.duplicado)throw new Error(data.error||'La configuración de la orden ya no es válida. Actualice los paquetes.');",
   "  if(data.job?.id&&data.job?.usuario?.id===usuarioActual.id){trabajos[rk]={...data.job,jobId:data.job.id};if(trabajos[d])delete trabajos[d];guardarJobs()}",
   "  if(!sil)toast(data.mensaje||'Solicitud enviada.',status===409?'':'ok');pintar();iniciarPoll();return data",
   "}",
