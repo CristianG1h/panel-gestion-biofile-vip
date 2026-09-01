@@ -199,6 +199,7 @@ function pintarPruebaLab(data){
   h+='<div class="labBox"><h4>Resultado en vivo de BIOFILE</h4><div class="contenido">'+
     labBadges([{t:'Paquetes encontrados: '+Number(inv.paquetesDetectados||0),ok:Number(inv.paquetesDetectados||0)>0},{t:'Relaciones válidas: '+rel.length,ok:rel.length>0},{t:'Duración: '+Math.round(Number(data.duracionMs||0)/1000)+' s',ok:false}])+
     '<div class="muted"><b>Acuerdo cargado:</b> '+esc(inv.acuerdoExacto||'—')+'</div>'+
+    ((inv.empresasMision||[]).length?'<div class="muted" style="margin-top:5px"><b>Empresas en misión detectadas:</b> '+esc(inv.empresasMision.join(' | '))+'</div>':'')+
     (rel.length?'<ul class="labLista" style="margin-top:8px">'+rel.map(p=>'<li><b>'+esc(p.nombre)+'</b> → '+esc(p.tipoEvaluacion)+'</li>').join('')+'</ul>':'')+
     pintarDiagnosticoPaquetes(inv.diagnostico||[])+
     '</div></div>';
@@ -207,6 +208,11 @@ function pintarPruebaLab(data){
 }
 function pintarDiagnosticoPaquetes(lista){
   if(!Array.isArray(lista)||!lista.length)return '';
+  if(lista.some(x=>x.tipoEvaluacion||x.fuente)){
+    return '<div class="tabla" style="margin-top:10px"><table><thead><tr><th>Tipo de evaluación consultado</th><th>Estado</th><th>Paquetes devueltos por BIOFILE</th><th>Método</th></tr></thead><tbody>'+
+      lista.map(x=>'<tr><td><b>'+esc(x.tipoEvaluacion||'—')+'</b></td><td><span class="badge '+(x.estado==='OK'?'ok':'off')+'">'+esc(x.estado||'—')+'</span>'+(x.error?'<div class="actividadDetalle labError">'+esc(x.error)+'</div>':'')+'</td><td>'+esc((x.paquetes||[]).join(' | ')||'Sin paquetes para este tipo')+'</td><td>'+esc(x.fuente||'—')+(x.serviceMethod?'<div class="actividadDetalle">'+esc(x.serviceMethod)+'</div>':'')+'</td></tr>').join('')+
+      '</tbody></table></div>'
+  }
   return '<div class="tabla" style="margin-top:10px"><table><thead><tr><th>Paquete</th><th>Estado</th><th>Producto o Servicio observado</th><th>Tipo reconocido</th></tr></thead><tbody>'+
     lista.map(x=>'<tr><td><b>'+esc(x.paquete||'—')+'</b></td><td><span class="badge '+(x.estado==='OK'?'ok':'off')+'">'+esc(x.estado||'—')+'</span>'+(x.error?'<div class="actividadDetalle labError">'+esc(x.error)+'</div>':'')+'</td><td>'+esc((x.opcionesProductoServicio||[]).join(' | ')||'—')+'</td><td>'+esc((x.tiposReconocidos||[]).join(' | ')||'—')+'</td></tr>').join('')+
     '</tbody></table></div>'
@@ -221,7 +227,7 @@ async function probarCatalogoLab(guardar){
   const empresa=labEmpresaValor();if(empresa.length<3)return labEstado('Escriba una empresa válida.','warn');
   const botones=[$('labProbar'),$('labProbarGuardar'),$('labConsultar')];botones.forEach(b=>b.disabled=true);
   labEstado(guardar?'Investigando BIOFILE y guardando solo si la prueba es válida…':'Investigando BIOFILE en vivo sin modificar el catálogo…','');
-  $('labResultado').innerHTML='<div class="labBox"><div class="contenido muted">Abriendo Acuerdos Comerciales, buscando la empresa, leyendo paquetes y verificando Producto o Servicio…</div></div>';
+  $('labResultado').innerHTML='<div class="labBox"><div class="contenido muted">Abriendo Órdenes de Servicio, seleccionando la empresa y consultando directamente los autocompletados de paquetes para cada tipo de evaluación…</div></div>';
   try{
     const d=await api('/api/superadmin/catalogo/probar',{method:'POST',body:JSON.stringify({empresa,guardar})});
     $('labResultado').innerHTML=pintarPruebaLab(d);
