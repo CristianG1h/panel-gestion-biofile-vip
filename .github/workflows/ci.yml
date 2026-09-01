@@ -74,6 +74,9 @@ jobs:
           grep -q 'PANEL_MANUAL_RELACION_V612' app-v3.html
           grep -q 'PANEL_MANUAL_ORDEN_BIOFILE_V613' app-v3.html
           grep -q 'PANEL_CATALOGO_PAQUETES_V7' app-v3.html
+          grep -q 'SUPERADMIN_LAB_CATALOGO_V71' superadmin.html
+          grep -q '/api/superadmin/catalogo/probar' superadmin.html
+          grep -q 'labProbarGuardar' superadmin.html
           grep -q 'autoEmpresaV7' app-v3.html
           grep -q 'autoTipoV7' app-v3.html
           grep -q 'autoPaqueteV7' app-v3.html
