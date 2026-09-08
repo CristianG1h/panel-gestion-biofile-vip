@@ -137,10 +137,17 @@ const pintarNuevo = String.raw`function pintarRelacionManualV612(r){
   $('btnCopiarRelacionManual').onclick=function(){copiar('Nombre del Acuerdo Comercial, Contrato o Convenio: '+d.acuerdo+'\nNombre de la Empresa en Misión: '+d.mision,'Acuerdo y Empresa en Misión copiados.')}
 }
 `;
+
+// El catálogo v7 inserta sus helpers entre pintarRelacionManualV612() y pintar().
+// Hay que reemplazar únicamente la función manual para no borrar cargarCatalogoV7,
+// consultarCatalogoAutoV7 ni los demás helpers de paquetes.
+const finPintarRelacion = html.includes('const TIPOS_EVALUACION_V7=[')
+  ? 'const TIPOS_EVALUACION_V7=['
+  : 'function pintar(){';
 html = reemplazarEntre(
   html,
   'function pintarRelacionManualV612(r){',
-  'function pintar(){',
+  finPintarRelacion,
   pintarNuevo,
   'pintarRelacionManualV612'
 );
@@ -211,8 +218,9 @@ html = reemplazarEntre(
 
 if (!html.includes('PANEL_RELACION_PLACEHOLDER_V73') ||
     !html.includes('Empresa en misión validada; Acuerdo PARTICULARES ignorado') ||
-    !html.includes('Relación inconsistente')) {
-  throw new Error('La corrección v7.3 quedó incompleta.');
+    !html.includes('Relación inconsistente') ||
+    !html.includes('/api/catalogo/empresa')) {
+  throw new Error('La corrección v7.3 quedó incompleta o eliminó helpers del catálogo v7.');
 }
 
 fs.writeFileSync(appPath, html, 'utf8');
