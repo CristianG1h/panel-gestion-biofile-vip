@@ -42,7 +42,7 @@ $('btnManualCompleto').onclick=async()=>{
       body:JSON.stringify({documento:documentoManual,usuarioResponsable:responsable})
     });
 
-    // Se actualiza la referencia capturada, nunca la variable global `actual`,
+    // Se actualiza la referencia capturada, nunca la variable global actual,
     // porque puede ser null o corresponder a otro paciente cuando llega la respuesta.
     registroManual['ESTADO_BIOFILE']='COMPLETADO';
     registroManual['USUARIO_BIOFILE']=data.atribuidoA||responsable;
