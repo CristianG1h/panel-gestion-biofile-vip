@@ -58,6 +58,8 @@ jobs:
         run: node scripts/patch-panel-catalogo-paquetes-v7.mjs
       - name: Patch carrera ingreso manual v7.2
         run: node scripts/patch-manual-race-v7-2.mjs
+      - name: Patch relación con placeholder v7.3
+        run: node scripts/patch-relacion-placeholder-v7-3.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -77,6 +79,9 @@ jobs:
           grep -q 'PANEL_MANUAL_ORDEN_BIOFILE_V613' app-v3.html
           grep -q 'PANEL_CATALOGO_PAQUETES_V7' app-v3.html
           grep -q 'FIX_MANUAL_RACE_V72' app-v3.html
+          grep -q 'PANEL_RELACION_PLACEHOLDER_V73' app-v3.html
+          grep -q 'Empresa en misión validada; Acuerdo PARTICULARES ignorado' app-v3.html
+          grep -q 'Relación inconsistente' app-v3.html
           grep -q 'const registroManual=actual;' app-v3.html
           grep -q "registroManual\['ESTADO_BIOFILE'\]='COMPLETADO'" app-v3.html
           ! grep -q "});actual\['ESTADO_BIOFILE'\]='COMPLETADO'" app-v3.html
