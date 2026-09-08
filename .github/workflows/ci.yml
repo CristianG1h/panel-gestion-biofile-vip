@@ -56,6 +56,8 @@ jobs:
         run: node scripts/patch-manual-orden-biofile-v6-13.mjs
       - name: Patch catálogo de paquetes v7
         run: node scripts/patch-panel-catalogo-paquetes-v7.mjs
+      - name: Patch carrera ingreso manual v7.2
+        run: node scripts/patch-manual-race-v7-2.mjs
       - name: Verificar protecciones y reporte instalados
         run: |
           grep -q 'PANEL_SEGURIDAD_V6' app-v3.html
@@ -74,6 +76,10 @@ jobs:
           grep -q 'PANEL_MANUAL_RELACION_V612' app-v3.html
           grep -q 'PANEL_MANUAL_ORDEN_BIOFILE_V613' app-v3.html
           grep -q 'PANEL_CATALOGO_PAQUETES_V7' app-v3.html
+          grep -q 'FIX_MANUAL_RACE_V72' app-v3.html
+          grep -q 'const registroManual=actual;' app-v3.html
+          grep -q "registroManual\['ESTADO_BIOFILE'\]='COMPLETADO'" app-v3.html
+          ! grep -q "});actual\['ESTADO_BIOFILE'\]='COMPLETADO'" app-v3.html
           grep -q 'SUPERADMIN_LAB_CATALOGO_V71' superadmin.html
           grep -q '/api/superadmin/catalogo/probar' superadmin.html
           grep -q 'labProbarGuardar' superadmin.html
