@@ -72,12 +72,17 @@ jobs:
         run: node scripts/patch-centro-control-v8.mjs
       - name: Patch Centro de Control VIP v8.1
         run: node scripts/patch-centro-control-v8-1.mjs
+      - name: Patch Centro de Control VIP v8.2
+        run: node scripts/patch-centro-control-v8-2.mjs
       - name: Verificar Centro de Control VIP
         run: |
           test -f admin.html
           grep -q "Centro de Control VIP" admin.html
           grep -q "Ir a la página" admin.html
+          grep -q "alimentos.vipocupacional.com/login" admin.html
           grep -q "dashboard-alimentos.vipocupacional.com" admin.html
+          grep -q "Dashboard alimentos" admin.html
+          grep -q "Manipulación de alimentos" admin.html
           grep -q "CENTRO_CONTROL_FRAME_GUARD_V81" admin.html
           grep -q "superadmin.html?embedded=1" admin.html
           grep -q 'from = "/admin"' netlify.toml
