@@ -68,6 +68,14 @@ jobs:
         run: node scripts/patch-historico-fuente-legacy-v7-6.mjs
       - name: Patch revisión paquetes solo por Órdenes v7.7
         run: node scripts/patch-superadmin-catalogo-v7-7.mjs
+      - name: Patch Centro de Control VIP v8
+        run: node scripts/patch-centro-control-v8.mjs
+      - name: Verificar Centro de Control VIP
+        run: |
+          test -f admin.html
+          grep -q "Centro de Control VIP" admin.html
+          grep -q "Ir a la página" admin.html
+          grep -q 'from = "/admin"' netlify.toml
       - name: Verificar protecciones y reporte instalados
         run: node scripts/verificar-panel-v7-3.mjs
       - name: Verificar directorio empresas v7.4
