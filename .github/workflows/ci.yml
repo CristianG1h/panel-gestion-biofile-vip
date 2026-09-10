@@ -62,6 +62,8 @@ jobs:
         run: node scripts/patch-relacion-placeholder-v7-3.mjs
       - name: Patch directorio de empresas v7.4
         run: node scripts/patch-superadmin-directorio-v7-4.mjs
+      - name: Patch históricos ingresados v7.5
+        run: node scripts/patch-historico-ingresados-v7-5.mjs
       - name: Verificar protecciones y reporte instalados
         run: node scripts/verificar-panel-v7-3.mjs
       - name: Verificar directorio empresas v7.4
