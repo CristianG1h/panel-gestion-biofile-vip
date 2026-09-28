@@ -32,20 +32,23 @@
     const cityNorm=normMap(city), catalogById=new Map((conf.catalog||[]).map(p=>[String(p.id),p]));
     const autoCities=conf.automaticCityMap?.cities||{};
     const cityKey=Object.keys(autoCities).find(k=>normMap(k)===cityNorm);
-    return [...new Set((exams||[]).map(canonicalExamUi).filter(Boolean))].map(exam=>{
+    const result=[];
+    for(const exam of [...new Set((exams||[]).map(canonicalExamUi).filter(Boolean))]){
       const explicit=(conf.products||[]).find(m=>m.activo&&normMap(m.city)===cityNorm&&normMap(canonicalExamUi(m.exam))===normMap(exam));
-      if(explicit)return {exam,product:explicit.biofileProduct,id:String(explicit.productId||''),source:'manual'};
-      const id=cityKey?autoCities[cityKey]?.[exam]:null;
-      const p=id?catalogById.get(String(id)):null;
-      return {exam,product:p?.name||'',id:id?String(id):'',source:p?'automatic':'missing'};
-    });
+      if(explicit){result.push({exam,product:explicit.biofileProduct,id:String(explicit.productId||''),source:'manual'});continue;}
+      const configured=cityKey?autoCities[cityKey]?.[exam]:null;
+      const ids=Array.isArray(configured)?configured:(configured?[configured]:[]);
+      if(!ids.length){result.push({exam,product:'',id:'',source:'missing'});continue;}
+      ids.forEach(id=>{const p=catalogById.get(String(id));result.push({exam,product:p?.name||'',id:String(id),source:p?'automatic':'missing'});});
+    }
+    return result;
   }
   function updateBiofilePreview() {
     const box=$('natBiofileProducts');if(!box)return;
     const city=$('natCity')?.value||'',exams=($('natExams')?.value||'').split('\n').map(x=>x.trim()).filter(Boolean);
     const plan=productPlan(city,exams);
     box.value=plan.length?plan.map(x=>x.product||('⚠ SIN PRODUCTO EXACTO: '+x.exam)).join('\n'):'';
-    const note=$('natBiofileProductsNote');if(note){const missing=plan.filter(x=>!x.product);note.textContent=missing.length?missing.length+' examen(es) todavía no tienen producto BIOFILE exacto para '+(city||'la ciudad seleccionada')+'.':'Estos son los nombres exactos que el sistema buscará y seleccionará en BIOFILE.';note.className=missing.length?'nat-muted nat-map-warning':'nat-muted';}
+    const note=$('natBiofileProductsNote');if(note){const missing=plan.filter(x=>!x.product);note.textContent=!city?'Seleccione o corrija la ciudad del examen para ver los productos BIOFILE exactos.':missing.length?missing.length+' examen(es) todavía no tienen producto BIOFILE exacto para '+city+'.':'Estos son los nombres exactos que el sistema buscará y seleccionará en BIOFILE.';note.className=missing.length?'nat-muted nat-map-warning':'nat-muted';}
   }
   function edit(id) {
     const c=concepts.find(x=>x.id===id);if(!c)return;editing=id;
@@ -86,7 +89,7 @@
   $('natRows').onclick=run(async e=>{const b=e.target.closest('[data-action]');if(!b)return;const {action,id}=b.dataset;b.disabled=true;try {if(action==='edit')edit(id);if(action==='process')await process(id);if(action==='detail')detail(id);if(action==='delete'){const c=concepts.find(x=>x.id===id);if(!c)return;if(!confirm('¿Eliminar este concepto de Nacionales?\n\n'+c.sourceFile+'\n\nEsta acción lo quita del listado. Si ya tuvo un envío a BIOFILE, el historial de ese envío se conserva.'))return;await api('concepts/'+id,'DELETE');selected.delete(id);concepts=concepts.filter(x=>x.id!==id);if(editing===id){editing=null;$('natEditor').hidden=true;}render();notice('Concepto eliminado del listado de Nacionales.');}if(action==='retry'){await api('jobs/'+id+'/retry','POST',{});await refresh();}}finally{b.disabled=false;}});
   $('natSaveEdit').onclick=run(saveEdit);$('natHideEdit').onclick=()=>$('natEditor').hidden=true;$('natCompany').oninput=()=>{$('natCompanyMission').textContent=$('natCompany').value.trim()?'Empresa en misión: '+$('natCompany').value.trim():'Seleccione una empresa de la lista.';};$('natCity').oninput=updateBiofilePreview;$('natExams').oninput=updateBiofilePreview;
   $('natProcess').onclick=run(async()=>{let count=0,fail=0,skipped=0;for(const id of selected){const c=concepts.find(x=>x.id===id);if(!c||state(c)!=='LISTO'){skipped++;continue;}try{await process(id);count++;}catch{fail++;}}notice(`${count} enviados a BIOFILE.${skipped?` ${skipped} no estaban listos y no se enviaron.`:''}${fail?` ${fail} presentaron error.`:''}`,fail>0);});
-  $('natConfigToggle').onclick=run(async()=>{$('natConfig').hidden=!$('natConfig').hidden;$('natMapProduct').innerHTML=conf.catalog.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ID ${esc(p.id)} · ${p.price}</option>`).join('');const auto=conf.automaticCityMap?.cities||{};const byId=new Map(conf.catalog.map(p=>[String(p.id),p]));const autoHtml=Object.entries(auto).map(([city,exams])=>`<div class="nat-city-map"><b>${esc(city)}</b>${Object.entries(exams).map(([exam,id])=>{const p=byId.get(String(id));return `<span>${esc(exam)} → ${esc(p?.name||('ID '+id))}</span>`;}).join('')}</div>`).join('');const manualHtml=conf.products.length?conf.products.map(p=>`<div>${p.activo?'ACTIVO':'INACTIVO'} · ${esc(p.city)} / ${esc(p.exam)} → ${esc(p.biofileProduct)} · ${esc(p.prestador)}</div>`).join(''):'<div class="nat-muted">Sin mapeos manuales. Se usarán los productos automáticos por ciudad.</div>';$('natMappings').innerHTML=`<h4>Productos automáticos organizados por ciudad</h4><p class="nat-muted">Los mapeos manuales, si existen, tienen prioridad sobre estos productos.</p>${autoHtml}<h4>Mapeos manuales</h4>${manualHtml}`;$('natSourceCompanies').innerHTML=companySource.map(c=>`<option value="${esc(c.acuerdo || c.cliente || '')}"></option>`).join('');});
+  $('natConfigToggle').onclick=run(async()=>{$('natConfig').hidden=!$('natConfig').hidden;$('natMapProduct').innerHTML=conf.catalog.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ID ${esc(p.id)} · ${p.price}</option>`).join('');const auto=conf.automaticCityMap?.cities||{};const byId=new Map(conf.catalog.map(p=>[String(p.id),p]));const autoHtml=Object.entries(auto).map(([city,exams])=>`<div class="nat-city-map"><b>${esc(city)}</b>${Object.entries(exams).flatMap(([exam,value])=>{const ids=Array.isArray(value)?value:[value];return ids.map(id=>{const p=byId.get(String(id));return `<span>${esc(exam)} → ${esc(p?.name||('ID '+id))}</span>`;});}).join('')}</div>`).join('');const manualHtml=conf.products.length?conf.products.map(p=>`<div>${p.activo?'ACTIVO':'INACTIVO'} · ${esc(p.city)} / ${esc(p.exam)} → ${esc(p.biofileProduct)} · ${esc(p.prestador)}</div>`).join(''):'<div class="nat-muted">Sin mapeos manuales. Se usarán los productos automáticos por ciudad.</div>';$('natMappings').innerHTML=`<h4>Productos automáticos organizados por ciudad</h4><p class="nat-muted">Los mapeos manuales, si existen, tienen prioridad sobre estos productos.</p>${autoHtml}<h4>Mapeos manuales</h4>${manualHtml}`;$('natSourceCompanies').innerHTML=companySource.map(c=>`<option value="${esc(c.acuerdo || c.cliente || '')}"></option>`).join('');});
   $('natSaveCompany').onclick=run(async()=>{await api('config/companies','PUT',{alias:$('natAlias').value,acuerdoBiofile:$('natAgreement').value,empresaMisionBiofile:$('natMission').value,activo:true});conf=await api('config');notice('Empresa guardada.');});
   $('natSaveProduct').onclick=run(async()=>{await api('config/products','PUT',{city:$('natMapCity').value,exam:$('natMapExam').value,productId:$('natMapProduct').value,prestador:$('natProvider').value,formaPago:$('natPayment').value,cantidad:Number($('natQuantity').value),valor:$('natPrice').value,activo:$('natMapActive').checked});conf=await api('config');notice('Mapeo guardado.');});
 })();
