@@ -20,4 +20,6 @@ assert(!nacionales.includes("data-action=\"exclude\""), 'Nacionales no debe usar
 assert(!nacionales.includes("EXCLUIDO"), 'Nacionales no debe mostrar el estado Excluido');
 assert(nacionales.includes('✓ Revisión guardada.'), 'Guardar revisión debe confirmar y cerrar la edición');
 assert(nacionales.includes('Productos automáticos organizados por ciudad'), 'Ajustes avanzados debe mostrar el mapa por ciudad');
+assert(nacionales.includes('Reintentar envío'), 'Nacionales debe mostrar reintento claro cuando BIOFILE está ocupado');
+assert(nacionales.includes('Preparando BIOFILE'), 'Nacionales debe distinguir preparación de envío real');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
