@@ -1,5 +1,7 @@
 # Verificación del panel Nacionales
 
+Actualización: el listado se organiza en **Pendiente, Error, Ingresado y Eliminado** con contadores. Los parciales aparecen en Error conservando su O.S. Los ingresados no ofrecen un nuevo envío ordinario. Eliminar mueve el concepto a Eliminado y permite restaurarlo sin borrar su historial. El panel evita consultas de historial simultáneas y deja de consultar mientras la pestaña está oculta.
+
 El botón **🌎 Nacionales** está integrado en `app-v3.html` y reutiliza la sesión actual. Los roles user, admin y superadmin tienen acceso; solo Super Admin modifica mapeos. No se añade otro login ni otro rol.
 
 ## Cambios
