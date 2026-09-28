@@ -23,4 +23,6 @@ assert(nacionales.includes('Productos automáticos organizados por ciudad'), 'Aj
 assert(nacionales.includes('Reintentar envío'), 'Nacionales debe mostrar reintento claro cuando BIOFILE está ocupado');
 assert(nacionales.includes('Preparando BIOFILE'), 'Nacionales debe distinguir preparación de envío real');
 assert(nacionales.includes('safeRetry'), 'Nacionales debe permitir reintento seguro cuando no se creó ninguna orden');
+assert(nacionales.includes('Examen que se enviará a BIOFILE'), 'Nacionales debe mostrar el producto BIOFILE exacto antes de enviar');
+assert(nacionales.includes('productPlan'), 'Nacionales debe resolver el producto BIOFILE por ciudad y examen');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
