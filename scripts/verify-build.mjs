@@ -22,4 +22,5 @@ assert(nacionales.includes('✓ Revisión guardada.'), 'Guardar revisión debe c
 assert(nacionales.includes('Productos automáticos organizados por ciudad'), 'Ajustes avanzados debe mostrar el mapa por ciudad');
 assert(nacionales.includes('Reintentar envío'), 'Nacionales debe mostrar reintento claro cuando BIOFILE está ocupado');
 assert(nacionales.includes('Preparando BIOFILE'), 'Nacionales debe distinguir preparación de envío real');
+assert(nacionales.includes('safeRetry'), 'Nacionales debe permitir reintento seguro cuando no se creó ninguna orden');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
