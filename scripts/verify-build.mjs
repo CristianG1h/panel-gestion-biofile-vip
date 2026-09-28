@@ -15,4 +15,7 @@ assert(nacionales.includes('Empresa / Acuerdo BIOFILE'), 'Debe existir selector 
 assert(nacionales.includes('Enviar a BIOFILE'), 'Debe existir acción clara de envío');
 assert(nacionales.includes('Ver resumen'), 'Debe existir resumen legible');
 assert(!nacionales.includes("JSON.stringify({archivo:"), 'No se debe mostrar JSON crudo al usuario');
+assert(nacionales.includes("data-action=\"delete\""), 'Nacionales debe tener una X para eliminar conceptos');
+assert(!nacionales.includes("data-action=\"exclude\""), 'Nacionales no debe usar Excluir/Incluir');
+assert(!nacionales.includes("EXCLUIDO"), 'Nacionales no debe mostrar el estado Excluido');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
