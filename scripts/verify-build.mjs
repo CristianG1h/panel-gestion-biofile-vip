@@ -18,4 +18,6 @@ assert(!nacionales.includes("JSON.stringify({archivo:"), 'No se debe mostrar JSO
 assert(nacionales.includes("data-action=\"delete\""), 'Nacionales debe tener una X para eliminar conceptos');
 assert(!nacionales.includes("data-action=\"exclude\""), 'Nacionales no debe usar Excluir/Incluir');
 assert(!nacionales.includes("EXCLUIDO"), 'Nacionales no debe mostrar el estado Excluido');
+assert(nacionales.includes('✓ Revisión guardada.'), 'Guardar revisión debe confirmar y cerrar la edición');
+assert(nacionales.includes('Productos automáticos organizados por ciudad'), 'Ajustes avanzados debe mostrar el mapa por ciudad');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
