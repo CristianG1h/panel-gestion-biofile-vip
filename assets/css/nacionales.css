@@ -23,3 +23,11 @@
 .nat-delete{min-width:34px;padding-left:10px!important;padding-right:10px!important;font-size:17px!important;line-height:1;color:#a52b24!important;border-color:#dca29d!important;background:#fff4f3!important}
 .nat-delete:hover{background:#fde4e1!important;border-color:#bf5b53!important}
 html[data-theme="dark"] .nat-delete{background:#43201d!important;color:#ffc8c3!important;border-color:#78413c!important}
+
+/* NACIONALES_PRODUCT_PREVIEW_V4 */
+#natBiofileProducts{background:color-mix(in srgb,var(--panel,#fff) 94%,var(--azul,#1681c9) 6%);font-weight:700;line-height:1.45}
+.nat-map-warning{color:#9a6510!important}
+.nat-product-line{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(240px,1.3fr);gap:8px;padding:7px 0;border-bottom:1px solid var(--borde,#d5dde5)}
+.nat-product-line:last-child{border-bottom:0}
+.nat-product-line span{color:var(--muted,#64748b)}
+@media(max-width:650px){.nat-product-line{grid-template-columns:1fr}}
