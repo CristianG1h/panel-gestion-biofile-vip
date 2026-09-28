@@ -1,3 +1,5 @@
+> Actualización Nacionales: consulte [guía y tabla de verificación](docs/NACIONALES.md). El arranque/build utiliza fuentes consolidadas y ya no ejecuta los patches históricos.
+
 # Panel de gestión BIOFILE — VIP Salud Ocupacional
 
 Panel web de **VIP Salud Ocupacional** para buscar pacientes, revisar información, enviarlos al robot de BIOFILE, registrar ingresos manuales y consultar la operación por usuario.

@@ -13,7 +13,8 @@ html[data-theme="dark"]{--azul:#1688E3;--azul2:#83C8FF;--fondo:#07111C;--panel:#
 @media(max-width:800px){.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.wrap{padding:14px 10px 50px}th,td{padding:9px 7px}}@media(max-width:520px){.kpis{grid-template-columns:1fr}.modal{padding:8px}}
 
 /* SUPERADMIN_LAB_CATALOGO_V71 */
-.labGrid{display:grid;grid-template-columns:minmax(260px,1fr) auto auto auto;gap:8px;align-items:end;margin-top:12px}
+/* SUPERADMIN_CATALOGO_SOLO_ORDENES_V77 */
+.labGrid{display:grid;grid-template-columns:minmax(260px,1fr) auto auto;gap:8px;align-items:end;margin-top:12px}
 .labEstado{margin-top:10px;padding:10px 12px;border:1px solid var(--borde);border-radius:9px;background:var(--panel2);font-size:12px;line-height:1.45}
 .labEstado.ok{border-color:var(--verde)}.labEstado.err{border-color:var(--rojo)}.labEstado.warn{border-color:var(--amarillo)}
 .labResumen{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.labBox{border:1px solid var(--borde);border-radius:10px;overflow:hidden;margin-top:10px}
@@ -21,7 +22,22 @@ html[data-theme="dark"]{--azul:#1688E3;--azul2:#83C8FF;--fondo:#07111C;--panel:#
 .labLista{margin:0;padding-left:18px;font-size:12px;line-height:1.55}.labError{color:var(--rojo);font-weight:750}
 .labRaw{white-space:pre-wrap;word-break:break-word;font:11px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--panel2);padding:10px;border-radius:8px;max-height:260px;overflow:auto}
 @media(max-width:900px){.labGrid{grid-template-columns:1fr 1fr}.labGrid .campo{grid-column:1/-1}}@media(max-width:560px){.labGrid{grid-template-columns:1fr}}
+/* PERFIL_ELIMINADOS_V5 */
+
+/* SUPERADMIN_DIRECTORIO_EMPRESAS_V74 */
+.dirGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.dirKpi{border:1px solid var(--borde);border-radius:11px;padding:12px;background:var(--panel2)}
+.dirKpi b{display:block;font-size:21px;color:var(--azul2);margin-bottom:4px}.dirKpi .muted{font-size:11px}
+.dirEstado{padding:10px 12px;border:1px solid var(--borde);border-radius:9px;background:var(--panel2);font-size:12px;line-height:1.5}
+.dirEstado.ok{border-color:var(--verde)}.dirEstado.err{border-color:var(--rojo)}.dirEstado.warn{border-color:var(--amarillo)}
+.dirRecientes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.dirEmpresa{padding:9px 10px;border:1px solid var(--borde);border-radius:8px;background:var(--panel2);font-size:11px;line-height:1.35;word-break:break-word}
+@media(max-width:820px){.dirGrid{grid-template-columns:1fr 1fr}.dirRecientes{grid-template-columns:1fr}}@media(max-width:520px){.dirGrid{grid-template-columns:1fr}}
 </style>
+<style id="vipEmbeddedV81">
+html.vip-embedded #btnCentroVip{display:none!important}
+</style>
+<script>if(new URLSearchParams(location.search).get('embedded')==='1'){document.documentElement.classList.add('vip-embedded')}</script>
 </head>
 <body>
 <div id="login" class="login">
@@ -43,7 +59,7 @@ html[data-theme="dark"]{--azul:#1688E3;--azul2:#83C8FF;--fondo:#07111C;--panel:#
     <img src="logo-vip.png" class="logo" alt="VIP">
     <h1>Superadministración BIOFILE</h1>
     <div class="muted">Usuarios, roles, estados, historial de actividad, auditoría y estadísticas.</div>
-    <div class="bar"><span class="pill" id="usuarioPill">—</span><a class="btn gris sm" href="/">← Panel BIOFILE</a><button class="btn gris sm" id="btnTema">🌙 Tema oscuro</button><button class="btn gris sm" id="btnLogout">Salir</button></div>
+    <div class="bar"><span class="pill" id="usuarioPill">—</span><a class="btn gris sm" href="/">← Panel BIOFILE</a><!-- CENTRO_CONTROL_VIP_V8_SUPER --><a class="btn azul sm" href="/admin" target="_top">🧭 Centro VIP</a><button class="btn gris sm" id="btnTema">🌙 Tema oscuro</button><button class="btn gris sm" id="btnLogout">Salir</button></div>
   </div>
 
   <div class="aviso">🔐 Los <b>Super Admin</b> no se crean aquí. Solo se crean en Render con <b>BIOFILE_ROLE_... = superadmin</b>. Desde esta pantalla se crean usuarios normales o administradores.</div>
@@ -72,20 +88,37 @@ html[data-theme="dark"]{--azul:#1688E3;--azul2:#83C8FF;--fondo:#07111C;--panel:#
     <div class="paginacion" id="pagUsuarios"></div>
   </section>
 
+  <section class="card" id="directorioEmpresasBiofile">
+    <div class="sectionTitle">
+      <div>
+        <h3 style="margin:0">🏢 Directorio de empresas BIOFILE</h3>
+        <div class="muted">Se sincroniza desde Informes → Clientes de BIOFILE. La primera revisión carga el histórico y luego busca novedades diariamente.</div>
+      </div>
+      <button class="btn azul sm" id="btnActualizarDirectorio">↻ Actualizar ahora</button>
+    </div>
+    <div class="dirGrid">
+      <div class="dirKpi"><b id="dirTotal">—</b><div class="muted">Empresas guardadas internamente</div></div>
+      <div class="dirKpi"><b id="dirNuevas">—</b><div class="muted">Nuevas en la última sincronización</div></div>
+      <div class="dirKpi"><b id="dirUltima">—</b><div class="muted">Última actualización correcta</div></div>
+      <div class="dirKpi"><b id="dirProxima">—</b><div class="muted">Próxima revisión automática</div></div>
+    </div>
+    <div class="dirEstado" id="dirEstado">Consultando estado del directorio…</div>
+    <div id="dirRecientes"></div>
+  </section>
+
   <section class="card" id="labCatalogoBiofile">
     <div class="sectionTitle">
       <div>
-        <h3 style="margin:0">🧪 Laboratorio de paquetes BIOFILE</h3>
-        <div class="muted">Pruebe una empresa sin tocar pacientes. Puede ver lo guardado, hacer una investigación real en Acuerdos Comerciales y, solo si el resultado es correcto, guardarlo en el catálogo.</div>
+        <h3 style="margin:0">🔎 Revisión de paquetes BIOFILE</h3>
+        <div class="muted">Revisa los paquetes exclusivamente desde Órdenes de Servicio usando los autocompletados reales de BIOFILE. No abre ni verifica el módulo de Acuerdos Comerciales.</div>
       </div>
     </div>
     <div class="labGrid">
       <div class="campo" style="margin:0"><label>Empresa / Acuerdo comercial exacto</label><input class="input" id="labEmpresa" placeholder="Ej. COMPAÑIA PRODUCTORA DE ENVASES METALICOS S A S PROENMETAL S A.S"></div>
-      <button class="btn gris" id="labConsultar">Ver guardado</button>
-      <button class="btn azul" id="labProbar">Probar BIOFILE</button>
-      <button class="btn verde" id="labProbarGuardar">Probar y guardar</button>
+      <button class="btn azul" id="labProbar">Revisar en BIOFILE</button>
+      <button class="btn verde" id="labProbarGuardar">Revisar y guardar</button>
     </div>
-    <div class="labEstado" id="labEstado">Escriba una empresa para comenzar.</div>
+    <div class="labEstado" id="labEstado">Escriba una empresa para revisar sus paquetes.</div>
     <div id="labResultado"></div>
   </section>
 
@@ -138,7 +171,7 @@ function norm(v){return String(v||'').trim().normalize('NFD').replace(/[\u0300-\
 function parseFecha(v){const s=String(v||'').trim();if(!s)return null;let d=new Date(s);if(!isNaN(d))return d;let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[, ]+([01]?\d|2[0-3]):(\d{2})(?::(\d{2}))?/);if(m)return new Date(`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}T${m[4].padStart(2,'0')}:${m[5]}:${m[6]||'00'}-05:00`);return null}
 function fmtCO(v){const d=parseFecha(v);if(!d)return String(v||'—');return new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'2-digit',month:'2-digit',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true}).format(d).replace(/a\.\s*m\./gi,'AM').replace(/p\.\s*m\./gi,'PM')}
 function nombrePaciente(r){return [r?.['Primer nombre'],r?.['Otros nombres'],r?.['Primer apellido'],r?.['Segundo apellido']].map(x=>String(x||'').trim()).filter(Boolean).join(' ')||'Sin nombre'}
-function fechaActividad(r){return r?.['FECHA_BIOFILE_ISO']||r?.['FECHA_BIOFILE']||r?.['Fecha de registro']||''}
+function fechaActividad(r){return r?.['FECHA_ELIMINADO_ISO']||r?.['FECHA_BIOFILE_ISO']||r?.['FECHA_BIOFILE']||r?.['Fecha de registro']||''}
 function paginar(lista,pagina){const totalPag=Math.max(1,Math.ceil(lista.length/PAGE_SIZE));const p=Math.min(Math.max(1,pagina||1),totalPag);return{p,totalPag,items:lista.slice((p-1)*PAGE_SIZE,p*PAGE_SIZE)}}
 function pintarPager(id,total,p,totalPag,clave,render){const c=$(id);if(!c)return;if(total<=PAGE_SIZE){c.innerHTML='';return}c.innerHTML=`<button class="btn gris sm" data-dir="-1" ${p<=1?'disabled':''}>← Anterior</button><span class="pagInfo">Página ${p} de ${totalPag} · ${total} registros</span><button class="btn gris sm" data-dir="1" ${p>=totalPag?'disabled':''}>Siguiente →</button>`;c.querySelectorAll('button').forEach(b=>b.onclick=()=>{paginas[clave]=p+Number(b.dataset.dir);render()})}
 
@@ -162,11 +195,45 @@ document.querySelectorAll('[data-rango]').forEach(b=>b.onclick=()=>{document.que
 function buscarMetaUsuario(nombre){return datosUsuarios.find(u=>norm(u.usuario)===norm(nombre))||datosRender.find(u=>norm(u.usuario)===norm(nombre))||{usuario:nombre,rol:'—',activo:true,fuente:'historial'}}
 function activarLinksPerfil(contenedor){contenedor?.querySelectorAll('.abrirPerfil').forEach(b=>b.onclick=()=>abrirPerfil(b.dataset.user))}
 async function obtenerTodosRegistros(){const u=URL_APPS_SCRIPT+'?accion=listar&clave='+encodeURIComponent(CLAVE_CONSULTA)+'&busqueda=&_='+Date.now();const r=await fetch(u,{cache:'no-store'});const d=await r.json();if(!r.ok||d.ok===false)throw new Error(d.error||'No fue posible consultar el historial de Google Sheets.');return Array.isArray(d.registros)?d.registros:[]}
-function renderPerfil(){if(!perfilUsuario)return;const q=paginar(datosPerfil,paginas.perfil);paginas.perfil=q.p;const comp=datosPerfil.filter(r=>norm(r['ESTADO_BIOFILE'])==='COMPLETADO').length,err=datosPerfil.filter(r=>['ERROR','PARCIAL'].includes(norm(r['ESTADO_BIOFILE']))).length,aut=datosPerfil.filter(r=>norm(r['MODO_INGRESO_BIOFILE'])==='AUTOMATICO').length,man=datosPerfil.filter(r=>norm(r['MODO_INGRESO_BIOFILE'])==='MANUAL').length;$('perfilKpis').innerHTML=`<div class="kpi"><b>${comp}</b><div class="muted">Completados</div></div><div class="kpi"><b>${aut}</b><div class="muted">Automáticos</div></div><div class="kpi"><b>${man}</b><div class="muted">Manuales</div></div><div class="kpi"><b>${err}</b><div class="muted">Errores / parciales</div></div>`;$('perfilBody').innerHTML=q.items.map(r=>{const estado=String(r['ESTADO_BIOFILE']||'PENDIENTE'),orden=String(r['NUMERO_OS_BIOFILE']||''),error=String(r['ERROR_BIOFILE']||'');return`<tr><td>${esc(fmtCO(fechaActividad(r)))}</td><td><b>${esc(nombrePaciente(r))}</b></td><td>${esc((r['Tipo doc']||'')+' '+(r['N° documento']||''))}</td><td>${esc(r['Empresa en misión']||'—')}</td><td><span class="badge">${esc(r['MODO_INGRESO_BIOFILE']||'—')}</span></td><td><span class="badge ${norm(estado)==='COMPLETADO'?'ok':['ERROR','PARCIAL'].includes(norm(estado))?'off':''}">${esc(estado)}</span>${orden?`<div class="actividadDetalle">Orden: ${esc(orden)}</div>`:''}${error?`<div class="actividadDetalle">${esc(error)}</div>`:''}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Este usuario todavía no tiene pacientes registrados a su nombre.</td></tr>';pintarPager('pagPerfil',datosPerfil.length,q.p,q.totalPag,'perfil',renderPerfil)}
-async function cargarPerfil(){if(!perfilUsuario)return;$('perfilBody').innerHTML='<tr><td colspan="6" class="muted">Cargando historial…</td></tr>';try{const todos=await obtenerTodosRegistros();datosPerfil=todos.filter(r=>norm(r['USUARIO_BIOFILE'])===norm(perfilUsuario.usuario)).sort((a,b)=>(parseFecha(fechaActividad(b))?.getTime()||0)-(parseFecha(fechaActividad(a))?.getTime()||0));paginas.perfil=1;renderPerfil()}catch(e){$('perfilBody').innerHTML=`<tr><td colspan="6" class="muted">${esc(e.message)}</td></tr>`;toast(e.message,'err')}}
+function renderPerfil(){if(!perfilUsuario)return;const q=paginar(datosPerfil,paginas.perfil);paginas.perfil=q.p;const comp=datosPerfil.filter(r=>norm(r['ESTADO_BIOFILE'])==='COMPLETADO').length,err=datosPerfil.filter(r=>['ERROR','PARCIAL'].includes(norm(r['ESTADO_BIOFILE']))).length,aut=datosPerfil.filter(r=>norm(r['MODO_INGRESO_BIOFILE'])==='AUTOMATICO').length,man=datosPerfil.filter(r=>norm(r['MODO_INGRESO_BIOFILE'])==='MANUAL').length,elim=datosPerfil.filter(r=>norm(r['ESTADO_BIOFILE'])==='ELIMINADO').length;$('perfilKpis').innerHTML=`<div class="kpi"><b>${comp}</b><div class="muted">Completados</div></div><div class="kpi"><b>${aut}</b><div class="muted">Automáticos</div></div><div class="kpi"><b>${man}</b><div class="muted">Manuales</div></div><div class="kpi"><b>${err}</b><div class="muted">Errores / parciales</div></div><div class="kpi"><b>${elim}</b><div class="muted">Eliminados</div></div>`;$('perfilBody').innerHTML=q.items.map(r=>{const estado=String(r['ESTADO_BIOFILE']||'PENDIENTE'),orden=String(r['NUMERO_OS_BIOFILE']||''),error=String(r['ERROR_BIOFILE']||'');return`<tr><td>${esc(fmtCO(fechaActividad(r)))}</td><td><b>${esc(nombrePaciente(r))}</b></td><td>${esc((r['Tipo doc']||'')+' '+(r['N° documento']||''))}</td><td>${esc(r['Empresa en misión']||'—')}</td><td><span class="badge">${esc(r['MODO_INGRESO_BIOFILE']||'—')}</span></td><td><span class="badge ${norm(estado)==='COMPLETADO'?'ok':['ERROR','PARCIAL'].includes(norm(estado))?'off':''}">${esc(estado)}</span>${orden?`<div class="actividadDetalle">Orden: ${esc(orden)}</div>`:''}${error?`<div class="actividadDetalle">${esc(error)}</div>`:''}${norm(estado)==='ELIMINADO'&&r['MOTIVO_ELIMINADO']?`<div class="actividadDetalle">Motivo: ${esc(r['MOTIVO_ELIMINADO'])}</div>`:''}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Este usuario todavía no tiene pacientes registrados a su nombre.</td></tr>';pintarPager('pagPerfil',datosPerfil.length,q.p,q.totalPag,'perfil',renderPerfil)}
+async function cargarPerfil(){if(!perfilUsuario)return;$('perfilBody').innerHTML='<tr><td colspan="6" class="muted">Cargando historial…</td></tr>';try{const todos=await obtenerTodosRegistros();datosPerfil=todos.filter(r=>norm(r['USUARIO_BIOFILE'])===norm(perfilUsuario.usuario)||norm(r['ELIMINADO_POR'])===norm(perfilUsuario.usuario)).sort((a,b)=>(parseFecha(fechaActividad(b))?.getTime()||0)-(parseFecha(fechaActividad(a))?.getTime()||0));paginas.perfil=1;renderPerfil()}catch(e){$('perfilBody').innerHTML=`<tr><td colspan="6" class="muted">${esc(e.message)}</td></tr>`;toast(e.message,'err')}}
 async function abrirPerfil(nombre){if(!nombre||nombre==='—')return;perfilUsuario=buscarMetaUsuario(nombre);$('perfilTitulo').textContent=perfilUsuario.usuario;$('perfilSub').textContent='Historial de actividad en BIOFILE';const rol=perfilUsuario.rol==='superadmin'?'Super Admin':perfilUsuario.rol==='admin'?'Administrador':perfilUsuario.rol==='user'?'Usuario':perfilUsuario.rol;$('perfilBadges').innerHTML=`<span class="badge">${esc(rol||'—')}</span><span class="badge ${perfilUsuario.activo===false?'off':'ok'}">${perfilUsuario.activo===false?'Inactivo':'Activo'}</span>${perfilUsuario.fuente?`<span class="badge">Fuente: ${esc(perfilUsuario.fuente)}</span>`:''}`;$('modalPerfil').classList.remove('oculto');await cargarPerfil()}
 $('cerrarPerfil').onclick=()=>$('modalPerfil').classList.add('oculto');$('recargarPerfil').onclick=cargarPerfil;
 
+
+let timerDirectorioV74=null;
+function fmtDirectorioV74(iso){return iso?fmtCO(iso):'Pendiente'}
+function estadoClaseDirectorioV74(d){if(d.sincronizando)return'warn';if(String(d.estado||'').toUpperCase()==='ERROR')return'err';if(String(d.estado||'').toUpperCase()==='OK')return'ok';return''}
+function pintarDirectorioV74(d){
+  d=d||{};
+  $('dirTotal').textContent=Number(d.totalEmpresas||0).toLocaleString('es-CO');
+  $('dirNuevas').textContent=Number(d.nuevasUltima||0).toLocaleString('es-CO');
+  $('dirUltima').textContent=d.ultimoExitoIso?fmtDirectorioV74(d.ultimoExitoIso):'Pendiente';
+  $('dirProxima').textContent=d.proximaRevisionIso?fmtDirectorioV74(d.proximaRevisionIso):'Pendiente';
+  const estado=$('dirEstado');estado.className='dirEstado '+estadoClaseDirectorioV74(d);
+  if(d.sincronizando)estado.textContent='⏳ BIOFILE está revisando el listado de empresas. Puede seguir usando el panel mientras termina.';
+  else if(String(d.estado||'').toUpperCase()==='ERROR')estado.textContent='⚠ Última actualización con error: '+(d.error||'sin detalle');
+  else if(d.ultimoExitoIso)estado.textContent='✓ Directorio actualizado. Último rango revisado: '+(d.fechaDesde||'—')+' a '+(d.fechaHasta||'—')+'.';
+  else estado.textContent='El directorio todavía no tiene una sincronización completa. Render la iniciará automáticamente.';
+  const recientes=Array.isArray(d.recientes)?d.recientes:[];
+  $('dirRecientes').innerHTML=recientes.length?'<div class="muted" style="margin-top:11px"><b>Empresas detectadas recientemente</b></div><div class="dirRecientes">'+recientes.slice(0,8).map(x=>'<div class="dirEmpresa"><b>'+esc(x.acuerdo||'—')+'</b>'+(x.cliente&&x.cliente!==x.acuerdo?'<div class="muted">Cliente: '+esc(x.cliente)+'</div>':'')+'</div>').join('')+'</div>':'';
+  $('btnActualizarDirectorio').disabled=!!d.sincronizando;
+}
+async function cargarDirectorioEmpresasV74(){
+  try{const r=await api('/api/superadmin/directorio/estado');pintarDirectorioV74(r.directorio||{});return r.directorio||{}}
+  catch(e){$('dirEstado').className='dirEstado err';$('dirEstado').textContent=e.message;throw e}
+}
+async function esperarDirectorioV74(){
+  clearInterval(timerDirectorioV74);let intentos=0;
+  timerDirectorioV74=setInterval(async()=>{
+    intentos++;try{const d=await cargarDirectorioEmpresasV74();if(!d.sincronizando||intentos>=80){clearInterval(timerDirectorioV74);timerDirectorioV74=null}}catch(_){clearInterval(timerDirectorioV74);timerDirectorioV74=null}
+  },3000);
+}
+$('btnActualizarDirectorio').onclick=async()=>{
+  const b=$('btnActualizarDirectorio');b.disabled=true;
+  try{await api('/api/superadmin/directorio/sincronizar',{method:'POST',body:JSON.stringify({completo:true})});toast('Reconstrucción completa del directorio iniciada.','ok');await cargarDirectorioEmpresasV74();esperarDirectorioV74()}
+  catch(e){toast(e.message,'err');b.disabled=false}
+};
 
 function labEmpresaValor(){return String($('labEmpresa').value||'').trim()}
 function labEstado(m,t=''){$('labEstado').textContent=m;$('labEstado').className='labEstado '+t}
@@ -185,9 +252,9 @@ function pintarPruebaLab(data){
   const inv=data&&data.investigacion;
   if(!inv){
     const det=data&&data.detalleCatalogo;
-    let h=pintarCatalogoLab(data&&data.previo,'Catálogo antes de la prueba');
+    let h='';
     if(det){
-      h+='<div class="labBox"><h4>Diagnóstico de la prueba</h4><div class="contenido">'+
+      h+='<div class="labBox"><h4>Diagnóstico de la revisión</h4><div class="contenido">'+
         labBadges([{t:'Paquetes encontrados: '+((det.paquetesDetectados||[]).length),ok:(det.paquetesDetectados||[]).length>0}])+
         pintarDiagnosticoPaquetes(det.diagnostico||[])+
         '</div></div>';
@@ -195,7 +262,7 @@ function pintarPruebaLab(data){
     return h;
   }
   const rel=Array.isArray(inv.paquetes)?inv.paquetes:[];
-  let h=pintarCatalogoLab(data.previo,'Catálogo antes de la prueba');
+  let h='';
   h+='<div class="labBox"><h4>Resultado en vivo de BIOFILE</h4><div class="contenido">'+
     labBadges([{t:'Paquetes encontrados: '+Number(inv.paquetesDetectados||0),ok:Number(inv.paquetesDetectados||0)>0},{t:'Relaciones válidas: '+rel.length,ok:rel.length>0},{t:'Duración: '+Math.round(Number(data.duracionMs||0)/1000)+' s',ok:false}])+
     '<div class="muted"><b>Acuerdo cargado:</b> '+esc(inv.acuerdoExacto||'—')+'</div>'+
@@ -203,7 +270,7 @@ function pintarPruebaLab(data){
     (rel.length?'<ul class="labLista" style="margin-top:8px">'+rel.map(p=>'<li><b>'+esc(p.nombre)+'</b> → '+esc(p.tipoEvaluacion)+'</li>').join('')+'</ul>':'')+
     pintarDiagnosticoPaquetes(inv.diagnostico||[])+
     '</div></div>';
-  if(data.guardar)h+=pintarCatalogoLab(data.catalogoGuardado,'Catálogo guardado después de la prueba');
+  if(data.guardar)h+=pintarCatalogoLab(data.catalogoGuardado,'Catálogo guardado después de la revisión');
   return h;
 }
 function pintarDiagnosticoPaquetes(lista){
@@ -217,33 +284,26 @@ function pintarDiagnosticoPaquetes(lista){
     lista.map(x=>'<tr><td><b>'+esc(x.paquete||'—')+'</b></td><td><span class="badge '+(x.estado==='OK'?'ok':'off')+'">'+esc(x.estado||'—')+'</span>'+(x.error?'<div class="actividadDetalle labError">'+esc(x.error)+'</div>':'')+'</td><td>'+esc((x.opcionesProductoServicio||[]).join(' | ')||'—')+'</td><td>'+esc((x.tiposReconocidos||[]).join(' | ')||'—')+'</td></tr>').join('')+
     '</tbody></table></div>'
 }
-async function consultarCatalogoLab(){
-  const empresa=labEmpresaValor();if(empresa.length<3)return labEstado('Escriba una empresa válida.','warn');
-  const b=$('labConsultar');b.disabled=true;labEstado('Consultando únicamente lo que está guardado…','');
-  try{const d=await api('/api/superadmin/catalogo/actual?empresa='+encodeURIComponent(empresa));$('labResultado').innerHTML=pintarCatalogoLab(d.catalogo);labEstado(d.catalogo?'Catálogo guardado cargado.':'Esta empresa todavía no tiene catálogo guardado.',d.catalogo?'ok':'warn')}
-  catch(e){labEstado(e.message,'err');$('labResultado').innerHTML=''}finally{b.disabled=false}
-}
 async function probarCatalogoLab(guardar){
   const empresa=labEmpresaValor();if(empresa.length<3)return labEstado('Escriba una empresa válida.','warn');
-  const botones=[$('labProbar'),$('labProbarGuardar'),$('labConsultar')];botones.forEach(b=>b.disabled=true);
-  labEstado(guardar?'Investigando BIOFILE y guardando solo si la prueba es válida…':'Investigando BIOFILE en vivo sin modificar el catálogo…','');
+  const botones=[$('labProbar'),$('labProbarGuardar')];botones.forEach(b=>b.disabled=true);
+  labEstado(guardar?'Revisando BIOFILE y guardando solo si el resultado es válido…':'Revisando BIOFILE en vivo sin modificar el catálogo…','');
   $('labResultado').innerHTML='<div class="labBox"><div class="contenido muted">Abriendo Órdenes de Servicio, seleccionando la empresa y consultando directamente los autocompletados de paquetes para cada tipo de evaluación…</div></div>';
   try{
     const d=await api('/api/superadmin/catalogo/probar',{method:'POST',body:JSON.stringify({empresa,guardar})});
     $('labResultado').innerHTML=pintarPruebaLab(d);
-    labEstado(guardar?'Prueba correcta. El resultado válido quedó guardado.':'Prueba correcta. No se modificó el catálogo.','ok')
+    labEstado(guardar?'Revisión correcta. El resultado válido quedó guardado.':'Revisión correcta. No se modificó el catálogo.','ok')
   }catch(e){
     const d=e.data||{error:e.message};$('labResultado').innerHTML=pintarPruebaLab(d);
-    labEstado('La prueba detectó un problema: '+(d.error||e.message),'err')
+    labEstado('La revisión detectó un problema: '+(d.error||e.message),'err')
   }finally{botones.forEach(b=>b.disabled=false)}
 }
-$('labConsultar').onclick=consultarCatalogoLab;
 $('labProbar').onclick=()=>probarCatalogoLab(false);
 $('labProbarGuardar').onclick=()=>probarCatalogoLab(true);
-$('labEmpresa').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();consultarCatalogoLab()}});
+$('labEmpresa').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();probarCatalogoLab(false)}});
 
 $('btnRecargar').onclick=()=>cargarUsuarios().catch(e=>toast(e.message,'err'));$('btnAuditoria').onclick=cargarAuditoria;
-async function cargarTodo(){try{await Promise.all([cargarUsuarios(),cargarAuditoria(),cargarDash('hoy')])}catch(err){toast(err.message,'err')}}
+async function cargarTodo(){try{await Promise.all([cargarUsuarios(),cargarAuditoria(),cargarDash('hoy'),cargarDirectorioEmpresasV74()])}catch(err){toast(err.message,'err')}}
 restaurar();
 </script>
 </body>

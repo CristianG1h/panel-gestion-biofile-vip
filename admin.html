@@ -21,6 +21,7 @@
 </style>
 </head>
 <body>
+<script>/* CENTRO_CONTROL_FRAME_GUARD_V81 */if(window.self!==window.top){try{window.top.location.replace(window.location.href)}catch(_e){}}</script>
 <div id="login" class="login">
   <form id="loginForm" class="login-card">
     <img src="/logo-vip.png" alt="VIP">
@@ -47,7 +48,9 @@
       <div class="nav-section">Operación</div>
       <button class="nav-item" data-app="brigadas"><span class="nav-icon">🚑</span><span class="nav-label">Brigadas</span></button>
       <button class="nav-item" data-app="muestras"><span class="nav-icon">🧪</span><span class="nav-label">Toma de muestras</span></button>
+      <!-- CENTRO_CONTROL_ALIMENTOS_SEPARADO_V82 -->
       <button class="nav-item" data-app="alimentos"><span class="nav-icon">🍎</span><span class="nav-label">Manipulación de alimentos</span></button>
+      <button class="nav-item" data-app="dashboardAlimentos"><span class="nav-icon">📊</span><span class="nav-label">Dashboard alimentos</span></button>
 
       <div class="nav-section">Comunicaciones</div>
       <button class="nav-item" data-app="chatwoot"><span class="nav-icon">💬</span><span class="nav-label">Chatwoot</span></button>
@@ -93,11 +96,12 @@ const API='https://biofile-render-endpoint.onrender.com';
 const TOKEN_KEY='vip_biofile_session_v3';
 const $=id=>document.getElementById(id);
 const APPS={
-  biofile:{title:'Panel de gestión BIOFILE',subtitle:'Pacientes, ingresos, órdenes y operación BIOFILE',icon:'🏥',url:()=>location.origin+'/',host:'panel.vipocupacional.com'},
-  superadmin:{title:'Super Admin BIOFILE',subtitle:'Usuarios, auditoría, empresas y paquetes',icon:'🛡️',url:()=>location.origin+'/superadmin',host:'panel.vipocupacional.com/superadmin'},
+  biofile:{title:'Panel de gestión BIOFILE',subtitle:'Pacientes, ingresos, órdenes y operación BIOFILE',icon:'🏥',url:()=>location.origin+'/app-v3.html?embedded=1',host:'panel.vipocupacional.com'},
+  superadmin:{title:'Super Admin BIOFILE',subtitle:'Usuarios, auditoría, empresas y paquetes',icon:'🛡️',url:()=>location.origin+'/superadmin.html?embedded=1',host:'panel.vipocupacional.com/superadmin'},
   brigadas:{title:'Brigadas',subtitle:'Gestión de brigadas de salud ocupacional',icon:'🚑',url:()=> 'https://brigadas.vipocupacional.com/',host:'brigadas.vipocupacional.com'},
   muestras:{title:'Toma de muestras',subtitle:'Operación y registro de toma de muestras',icon:'🧪',url:()=> 'https://muestras.vipocupacional.com/',host:'muestras.vipocupacional.com'},
   alimentos:{title:'Manipulación de alimentos',subtitle:'Cursos, usuarios, certificados y administración',icon:'🍎',url:()=> 'https://alimentos.vipocupacional.com/login',host:'alimentos.vipocupacional.com'},
+  dashboardAlimentos:{title:'Dashboard de alimentos',subtitle:'Estadísticas y métricas del proyecto de manipulación de alimentos',icon:'📊',url:()=> 'https://dashboard-alimentos.vipocupacional.com/',host:'dashboard-alimentos.vipocupacional.com'},
   chatwoot:{title:'Chatwoot',subtitle:'Conversaciones y atención por WhatsApp',icon:'💬',url:()=> 'https://chat.vipocupacional.com/app/accounts/1/inbox/3',host:'chat.vipocupacional.com'},
   web:{title:'Página principal VIP',subtitle:'Sitio corporativo de VIP Salud Ocupacional',icon:'🌐',url:()=> 'https://vipocupacional.com/',host:'vipocupacional.com'}
 };
