@@ -27,3 +27,5 @@ assert(nacionales.includes('Examen que se enviará a BIOFILE'), 'Nacionales debe
 assert(nacionales.includes('productPlan'), 'Nacionales debe resolver el producto BIOFILE por ciudad y examen');
 assert(nacionales.includes('Array.isArray(configured)'), 'Nacionales debe mostrar varios productos BIOFILE cuando un examen los requiere');
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
+
+assert(nacionales.includes("safeRetry?'':btn('process'"), 'Nacionales debe mostrar un solo botón de reintento para errores previos al guardado');
