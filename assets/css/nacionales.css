@@ -53,3 +53,8 @@ html[data-theme="dark"] .nat-delete{background:#43201d!important;color:#ffc8c3!i
 .nat-product-line:last-child{border-bottom:0}
 .nat-product-line span{color:var(--muted,#64748b)}
 @media(max-width:650px){.nat-product-line{grid-template-columns:1fr}}
+
+
+/* NACIONALES_SHARED_TRASH_V5 */
+.nat-purge{background:#7f1d1d!important;color:#fff!important;border-color:#7f1d1d!important}
+.nat-purge:hover{background:#991b1b!important;border-color:#991b1b!important}
