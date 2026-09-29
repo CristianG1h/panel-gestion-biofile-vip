@@ -29,3 +29,7 @@ assert(nacionales.includes('Array.isArray(configured)'), 'Nacionales debe mostra
 console.log('Panel: sintaxis, empresa/acuerdo, resumen legible y progreso real verificados.');
 
 assert(nacionales.includes("safeRetry?'':btn('process'"), 'Nacionales debe mostrar un solo botón de reintento para errores previos al guardado');
+
+assert(nacionales.includes('Eliminar permanente'), 'Super Admin debe tener botón de borrado definitivo en Eliminados');
+assert(nacionales.includes("data-action=\"purge\""), 'Nacionales debe tener acción purge en Eliminados');
+assert(nacionales.includes("Usuario:"), 'Registros compartidos deben mostrar el usuario de origen');
