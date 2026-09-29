@@ -28,3 +28,6 @@ Un registro PARCIAL conserva su orden. La opción de reintentar productos solo s
 Se ejecutaron verificadores de sintaxis, protecciones v7.3 y directorio v7.4. Se comprobó el módulo con Playwright en escritorio y ancho móvil, datos sintéticos y API simulada. La prueba no crea órdenes reales. El backend contiene las instrucciones de despliegue, variables, limitaciones y pruebas de productos.
 
 Consulte [operación Nacionales](https://github.com/CristianG1h/biofile-render-endpoint/blob/main/docs/NACIONALES.md) y [despliegue y recuperación](https://github.com/CristianG1h/biofile-render-endpoint/blob/main/docs/DESPLIEGUE-Y-RECUPERACION.md).
+# Revisión de carga — 29 de septiembre de 2026
+
+Los errores de análisis aparecen en una lista persistente por archivo, además del contador del lote. El mensaje incluye la etapa que devuelve el servidor. Para reintentar, seleccione nuevamente el mismo archivo; el selector se limpia al terminar. La carga abre la sección del concepto recibido y restablece el filtro para que el resultado sea visible. Los errores se limpian al iniciar una nueva carga o cerrar sesión.
