@@ -744,7 +744,10 @@ function actualizarFicha(){
     const detalle=v.d?('<div class="progresoDetalle">'+esc(v.d)+'</div>'):'';
     const orden=v.os?('<div class="ordenBox">📄 <span>N°. O.S.: <b>'+esc(v.os)+'</b></span></div>'):'';
     const error=v.c==='err'?('<div class="progresoDetalle" style="color:var(--rojo)"><b>Motivo:</b> '+esc(jobDe(actual)?.error?.mensaje||actual['ERROR_BIOFILE']||v.d||'Error no especificado')+'</div>'):'';
-    box.innerHTML='<div class="progresoCabecera"><span>'+esc(v.t)+'</span><span class="progresoPorcentaje">'+v.p+'%</span></div>'+detalle+orden+'<div class="barra" style="margin-top:9px"><div class="relleno '+(v.c||'')+'" style="width:'+v.p+'%"></div></div>'+error;
+    const job=jobDe(actual);
+    const ajustes=job?.ajustesNacimiento||job?.resultado?.ajustesNacimiento||[];
+    const avisoNacimiento=ajustes.map(a=>'<div class="aviso" role="status"><strong>⚠ Lugar de nacimiento ajustado</strong><br>Se solicitó: '+esc(a.original)+'.<br>Se usó: '+esc(a.aplicado)+'.<br>'+esc(a.motivo)+' Revise este dato con la persona.</div>').join('');
+    box.innerHTML='<div class="progresoCabecera"><span>'+esc(v.t)+'</span><span class="progresoPorcentaje">'+v.p+'%</span></div>'+detalle+orden+'<div class="barra" style="margin-top:9px"><div class="relleno '+(v.c||'')+'" style="width:'+v.p+'%"></div></div>'+avisoNacimiento+error;
   }else box.classList.add('oculto');
   const terminado=v.c==='ok'||estado(actual)==='COMPLETADO'||jobDe(actual)?.estado==='completado';
   const activo=['en_cola','procesando'].includes(jobDe(actual)?.estado);
